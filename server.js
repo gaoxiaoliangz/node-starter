@@ -3,7 +3,7 @@
  */
 
 const app = require('./app')
-const debug = require('debug')('xeditor-server:server')
+const debug = require('debug')('express-starter:server')
 const http = require('http')
 
 /**
