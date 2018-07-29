@@ -1,9 +1,6 @@
-/**
- * Module dependencies.
- */
-
-const app = require('./app')
-const debug = require('debug')('express-starter:server')
+require('dotenv').config()
+const app = require('./core')
+const debug = require('debug')('myapp:server')
 const http = require('http')
 
 /**
@@ -25,7 +22,7 @@ const server = http.createServer(app)
 
 server.listen(port)
 server.on('error', onError)
-console.log(`server listening on ${port}`) // eslint-disable-line
+console.log(`server running on http://localhost:${port}`) // eslint-disable-line
 server.on('listening', onListening)
 
 /**

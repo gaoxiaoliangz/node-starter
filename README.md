@@ -1,10 +1,11 @@
-# express-starter
+# nodejs-rest-starter
 
 ## Features
 
 - eslint
 - ejs
 - express
+- multer
 - VS Code launch config
 
 ## How to run
