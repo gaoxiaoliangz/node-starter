@@ -6,7 +6,7 @@ const api = require('../api')
 const errorHandler = require('../middlewares/error-handler')
 const cors = require('../middlewares/cors')
 
-const restAPIApp = express()
+const restAPIApp = express.Router()
 
 const upload = multer({
   dest: os.tmpdir()

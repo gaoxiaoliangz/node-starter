@@ -1,18 +1,18 @@
 const express = require('express')
 const debug = require('debug')('myapp:site')
 
-const siteApp = express()
+const router = express.Router()
 
 const site = () => {
   debug('site up')
 
-  siteApp.get('/', (req, res) => {
+  router.get('/', (req, res) => {
     res.render('index', {
       title: 'Node.js REST starter'
     })
   })
 
-  return siteApp
+  return router
 }
 
 module.exports = site
