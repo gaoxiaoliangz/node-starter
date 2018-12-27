@@ -1,36 +1,57 @@
-const createError = require('http-errors')
-const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const logger = require('morgan')
-const site = require('./web/site')
-const restAPI = require('./web/rest-api')
+require('dotenv').config()
+const app = require('./app')
+const debug = require('debug')('myapp:server')
+const http = require('http')
 
-const rootApp = express()
+const onListening = () => {
+  const addr = server.address()
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
+  debug('Listening on ' + bind)
+}
 
-rootApp.use(logger('dev'))
-rootApp.use(express.json())
-rootApp.use(express.urlencoded({ extended: false }))
-rootApp.use(cookieParser())
-rootApp.use(express.static(path.resolve(__dirname, '../public')))
+const onError = error => {
+  if (error.syscall !== 'listen') {
+    throw error
+  }
 
-rootApp.use('/api', restAPI())
-rootApp.use(site())
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
-// catch 404 and forward to error handler
-rootApp.use((req, res, next) => {
-  next(createError(404))
-})
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges')
+      process.exit(1)
+      break
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use')
+      process.exit(1)
+      break
+    default:
+      throw error
+  }
+}
 
-// error handler
-rootApp.use((err, req, res, next) => { // eslint-disable-line
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+// Normalize a port into a number, string, or false.
+const normalizePort = val => {
+  const port = parseInt(val, 10)
+  if (isNaN(port)) {
+    // named pipe
+    return val
+  }
+  if (port >= 0) {
+    // port number
+    return port
+  }
+  return false
+}
 
-  // render the error page
-  res.status(err.status || 500)
-  res.render('error')
-})
+const port = normalizePort(process.env.PORT || '3000')
+const server = http.createServer(app)
 
-module.exports = rootApp
+app.set('port', port)
+
+//  Listen on provided port, on all network interfaces.
+server.listen(port)
+server.on('error', onError)
+debug(`server running on http://localhost:${port}`)
+server.on('listening', onListening)
