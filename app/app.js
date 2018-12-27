@@ -14,6 +14,10 @@ rootApp.use(express.urlencoded({ extended: false }))
 rootApp.use(cookieParser())
 rootApp.use(express.static(path.resolve(__dirname, '../public')))
 
+// view engine setup
+rootApp.set('views', path.resolve(__dirname, './views'))
+rootApp.set('view engine', 'ejs')
+
 rootApp.use('/api', restAPI())
 rootApp.use(site())
 
@@ -23,7 +27,8 @@ rootApp.use((req, res, next) => {
 })
 
 // error handler
-rootApp.use((err, req, res, next) => { // eslint-disable-line
+rootApp.use((err, req, res, next) => {
+  // eslint-disable-line
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
