@@ -1,5 +1,5 @@
-const Log = require('./log')
+import Log from './log'
 
-module.exports = {
+export default {
   Log,
 }

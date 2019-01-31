@@ -1,6 +1,7 @@
-const debug = require('debug')('myapp:cors')
+import debugFactory from 'debug'
+const debug = debugFactory('myapp:cors')
 
-const cors = (allowedOrigins) => (req, res, next) => {
+const cors = allowedOrigins => (req, res, next) => {
   const { origin, referer } = req.headers
   debug('origin', origin)
   debug('referer', referer)
@@ -15,4 +16,4 @@ const cors = (allowedOrigins) => (req, res, next) => {
   next()
 }
 
-module.exports = cors
+export default cors

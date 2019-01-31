@@ -1,12 +1,12 @@
 class CommonError extends Error {
   /**
-   * @param {object} data 
+   * @param {object} data
    * @param {number} data.statusCode
    * @param {string} data.message
    */
   constructor(data = {}) {
     const defaultError = {
-      statusCode: 400
+      statusCode: 400,
     }
     if (typeof data === 'object') {
       super(data.message)
@@ -21,6 +21,6 @@ class CommonError extends Error {
   }
 }
 
-module.exports = {
+export {
   CommonError,
 }

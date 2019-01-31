@@ -1,15 +1,16 @@
-const express = require('express')
-const debug = require('debug')('myapp:rest-api')
-const multer = require('multer')
-const os = require('os')
-const api = require('../api')
-const errorHandler = require('../middlewares/error-handler')
-const cors = require('../middlewares/cors')
+import express from 'express'
+import debugFactory from 'debug'
+const debug = debugFactory('myapp:rest-api')
+import multer from 'multer'
+import os from 'os'
+import api from '../api'
+import errorHandler from '../middlewares/error-handler'
+import cors from '../middlewares/cors'
 
 const restAPIApp = express.Router()
 
 const upload = multer({
-  dest: os.tmpdir()
+  dest: os.tmpdir(),
 })
 
 const setupRoutes = () => {
@@ -19,7 +20,11 @@ const setupRoutes = () => {
   router.get('/logs/:log', api.http(api.logs.read))
 
   // uploads
-  router.post('/uploads', upload.single('file'), api.http(api.uploads.commonUpload))
+  router.post(
+    '/uploads',
+    upload.single('file'),
+    api.http(api.uploads.commonUpload)
+  )
 
   // handle error
   router.use(errorHandler.render)
@@ -33,4 +38,4 @@ const restAPI = () => {
   return restAPIApp
 }
 
-module.exports = restAPI
+export default restAPI

@@ -1,4 +1,5 @@
-const debug = require('debug')('myapp:api:uploads')
+import debugFactory from 'debug'
+const debug = debugFactory('myapp:api:uploads')
 
 const commonUpload = object => {
   debug('uploading file', object.path)
@@ -7,6 +8,6 @@ const commonUpload = object => {
   }
 }
 
-module.exports = {
+export default {
   commonUpload,
 }

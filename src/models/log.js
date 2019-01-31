@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   find() {
     return [
       {
@@ -10,7 +10,7 @@ module.exports = {
         id: 1,
         content: 'this works',
         created_at: new Date().toISOString(),
-      }
+      },
     ]
-  }
+  },
 }

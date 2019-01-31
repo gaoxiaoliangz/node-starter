@@ -1,5 +1,6 @@
-const express = require('express')
-const debug = require('debug')('myapp:site')
+import express from 'express'
+import debugFactory from 'debug'
+const debug = debugFactory('myapp:site')
 
 const router = express.Router()
 
@@ -8,11 +9,11 @@ const site = () => {
 
   router.get('/', (req, res) => {
     res.render('index', {
-      title: 'Node.js REST starter'
+      title: 'Node.js REST starter',
     })
   })
 
   return router
 }
 
-module.exports = site
+export default site

@@ -1,10 +1,10 @@
-const createError = require('http-errors')
-const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const logger = require('morgan')
-const site = require('./web/site')
-const restAPI = require('./web/rest-api')
+import createError from 'http-errors'
+import express from 'express'
+import path from 'path'
+import cookieParser from 'cookie-parser'
+import logger from 'morgan'
+import site from './web/site'
+import restAPI from './web/rest-api'
 
 const rootApp = express()
 
@@ -38,4 +38,4 @@ rootApp.use((err, req, res, next) => {
   res.render('error')
 })
 
-module.exports = rootApp
+export default rootApp
