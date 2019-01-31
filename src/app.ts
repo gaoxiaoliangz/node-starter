@@ -28,7 +28,6 @@ rootApp.use((req, res, next) => {
 
 // error handler
 rootApp.use((err, req, res, next) => {
-  // eslint-disable-line
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
