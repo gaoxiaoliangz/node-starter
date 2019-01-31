@@ -1,8 +1,8 @@
-import express from 'express'
+import * as express from 'express'
 import debugFactory from 'debug'
 const debug = debugFactory('myapp:rest-api')
-import multer from 'multer'
-import os from 'os'
+import * as multer from 'multer'
+import * as os from 'os'
 import api from '../api'
 import errorHandler from '../middlewares/error-handler'
 import cors from '../middlewares/cors'

@@ -1,8 +1,8 @@
 import createError from 'http-errors'
-import express from 'express'
-import path from 'path'
-import cookieParser from 'cookie-parser'
-import logger from 'morgan'
+import * as express from 'express'
+import * as path from 'path'
+import * as cookieParser from 'cookie-parser'
+import * as logger from 'morgan'
 import site from './web/site'
 import restAPI from './web/rest-api'
 

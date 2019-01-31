@@ -1,4 +1,4 @@
-import express from 'express'
+import * as express from 'express'
 import debugFactory from 'debug'
 const debug = debugFactory('myapp:site')
 

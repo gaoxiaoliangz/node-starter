@@ -72,4 +72,4 @@ const http = apiMethod => {
   }
 }
 
-export { http, logs, uploads }
+export default { http, logs, uploads }
