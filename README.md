@@ -1,4 +1,4 @@
-# nodejs-rest-starter
+# nodejs-starter
 
 ## Features
 
