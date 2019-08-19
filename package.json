@@ -12,6 +12,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:debug:win": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ./node_modules/jest/bin/jest.js --runInBand",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
@@ -40,19 +41,5 @@
   },
   "repository": "git@github.com:gaoxiaoliangz/nodejs-rest-starter.git",
   "author": "gaoxiaoliangz <gaoxiaoliangz@gmail.com>",
-  "license": "MIT",
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
-  }
+  "license": "MIT"
 }
