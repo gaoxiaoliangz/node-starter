@@ -1,5 +1,7 @@
 # node-starter
 
+A simple express-based node starter
+
 ## Features
 
 - eslint
