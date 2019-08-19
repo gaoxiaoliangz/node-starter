@@ -9,7 +9,7 @@ const site = () => {
 
   router.get('/', (req, res) => {
     res.render('index', {
-      title: 'Node.js REST starter',
+      title: 'node starter',
     })
   })
 
