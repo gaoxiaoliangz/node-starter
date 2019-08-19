@@ -12,7 +12,6 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "lint": "tslint -p tsconfig.json -c tslint.json",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
@@ -37,8 +36,7 @@
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
-    "tsconfig-paths": "^3.8.0",
-    "tslint": "5.18.0"
+    "tsconfig-paths": "^3.8.0"
   },
   "repository": "git@github.com:gaoxiaoliangz/nodejs-rest-starter.git",
   "author": "gaoxiaoliangz <gaoxiaoliangz@gmail.com>",
