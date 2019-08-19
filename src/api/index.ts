@@ -16,21 +16,14 @@ const http = apiMethod => {
   return function apiHandler(req, res, next) {
     // We define 2 properties for using as arguments in API calls:
     let object = req.body
-    let options = _.extend(
-      {},
-      req.file,
-      { ip: req.ip },
-      req.query,
-      req.params,
-      {
-        context: {
-          // @todo
-          // user: ((req.user && req.user.id) || (req.user && models.User.isExternalUser(req.user.id))) ? req.user.id : null,
-          client: req.client && req.client.slug ? req.client.slug : null,
-          client_id: req.client && req.client.id ? req.client.id : null,
-        },
-      }
-    )
+    let options = _.extend({}, req.file, { ip: req.ip }, req.query, req.params, {
+      context: {
+        // @todo
+        // user: ((req.user && req.user.id) || (req.user && models.User.isExternalUser(req.user.id))) ? req.user.id : null,
+        client: req.client && req.client.slug ? req.client.slug : null,
+        client_id: req.client && req.client.id ? req.client.id : null,
+      },
+    })
 
     // If this is a GET, or a DELETE, req.body should be null, so we only have options (route and query params)
     // If this is a PUT, POST, or PATCH, req.body is an object
@@ -46,10 +39,7 @@ const http = apiMethod => {
             return res.status(204).end()
           }
           // Keep CSV header and formatting
-          if (
-            res.get('Content-Type') &&
-            res.get('Content-Type').indexOf('text/csv') === 0
-          ) {
+          if (res.get('Content-Type') && res.get('Content-Type').indexOf('text/csv') === 0) {
             return res.status(200).send(response)
           }
 

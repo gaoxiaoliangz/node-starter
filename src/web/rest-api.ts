@@ -20,11 +20,7 @@ const setupRoutes = () => {
   router.get('/logs/:log', api.http(api.logs.read))
 
   // uploads
-  router.post(
-    '/uploads',
-    upload.single('file'),
-    api.http(api.uploads.commonUpload)
-  )
+  router.post('/uploads', upload.single('file'), api.http(api.uploads.commonUpload))
 
   // handle error
   router.use(errorHandler.render)
