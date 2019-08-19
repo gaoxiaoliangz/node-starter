@@ -1,7 +1,7 @@
-const models = require('../models')
-const { CommonError } = require('../error')
+import models from '../models'
+import { CommonError } from '../error'
 
-module.exports = {
+export default {
   browse() {
     return {
       logs: models.Log.find(),
@@ -13,11 +13,11 @@ module.exports = {
     if (!found) {
       throw new CommonError({
         statusCode: 404,
-        message: 'Log not found!'
+        message: 'Log not found!',
       })
     }
     return {
-      logs: [found]
+      logs: [found],
     }
-  }
+  },
 }

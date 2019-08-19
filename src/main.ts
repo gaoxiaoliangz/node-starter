@@ -1,7 +1,8 @@
 require('dotenv').config()
-const app = require('./app')
-const debug = require('debug')('myapp:server')
-const http = require('http')
+import app from './app'
+import debugFactory from 'debug'
+const debug = debugFactory('myapp:server')
+import * as http from 'http'
 
 const onListening = () => {
   const addr = server.address()

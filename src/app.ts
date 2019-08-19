@@ -1,17 +1,15 @@
-const createError = require('http-errors')
-const express = require('express')
-const path = require('path')
-const cookieParser = require('cookie-parser')
-const logger = require('morgan')
-const site = require('./web/site')
-const restAPI = require('./web/rest-api')
+import createError from 'http-errors'
+import express from 'express'
+import path from 'path'
+import logger from 'morgan'
+import site from './web/site'
+import restAPI from './web/rest-api'
 
 const rootApp = express()
 
 rootApp.use(logger('dev'))
 rootApp.use(express.json())
 rootApp.use(express.urlencoded({ extended: false }))
-rootApp.use(cookieParser())
 rootApp.use(express.static(path.resolve(__dirname, '../public')))
 
 // view engine setup
@@ -28,7 +26,6 @@ rootApp.use((req, res, next) => {
 
 // error handler
 rootApp.use((err, req, res, next) => {
-  // eslint-disable-line
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
@@ -38,4 +35,4 @@ rootApp.use((err, req, res, next) => {
   res.render('error')
 })
 
-module.exports = rootApp
+export default rootApp
