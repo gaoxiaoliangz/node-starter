@@ -1,5 +1,4 @@
 import Log from './log'
+import User from './user'
 
-export default {
-  Log,
-}
+export { Log, User }

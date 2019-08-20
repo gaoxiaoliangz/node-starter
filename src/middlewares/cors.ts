@@ -1,17 +1,12 @@
-import debugFactory from 'debug'
-const debug = debugFactory('myapp:cors')
-
-const cors = allowedOrigins => (req, res, next) => {
-  const { origin, referer } = req.headers
-  debug('origin', origin)
-  debug('referer', referer)
-  if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins === '*') {
-    debug(`set headers`)
-    res.setHeader('Access-Control-Allow-Origin', origin || '*')
-    res.setHeader('Access-Control-Allow-Credentials', true)
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
-  } else {
-    debug(`headers untouched ${referer}`)
+export const cors = () => (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+  )
+  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE')
+  if (req.method === 'OPTIONS') {
+    return res.send(null)
   }
   next()
 }
