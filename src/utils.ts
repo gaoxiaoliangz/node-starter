@@ -11,3 +11,8 @@ export const normalizePort = val => {
   }
   return false
 }
+
+export const delay = t =>
+  new Promise(resolve => {
+    setTimeout(resolve, t)
+  })

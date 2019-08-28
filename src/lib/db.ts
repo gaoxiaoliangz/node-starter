@@ -11,15 +11,16 @@ const connectDB = (() => {
     if (connected[dbUri]) {
       return Promise.resolve(connected[dbUri])
     }
-    const client = new MongoClient(dbUri, { useNewUrlParser: true })
-    connected[dbUri] = client
+    const client = new MongoClient(dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
+
     client.on('close', () => {
-      console.log(`${dbUri} disconnected`)
+      connected[dbUri] = undefined
+      debug(`closed connection to ${dbUri}`)
     })
 
     return new Promise((resolve, reject) => {
-      this.client.connect(err => {
-        this.connected = true
+      client.connect(err => {
+        connected[dbUri] = client
         if (err) {
           return reject(err)
         }
@@ -31,7 +32,7 @@ const connectDB = (() => {
 })()
 
 export class DB {
-  readonly client: MongoClient
+  client: MongoClient
   readonly database: string
   readonly dbURI: string
 
@@ -42,10 +43,13 @@ export class DB {
   }
 
   connect() {
-    return connectDB(this.dbURI)
+    return connectDB(this.dbURI).then(client => (this.client = client))
   }
 
   getDb() {
+    if (!this.client) {
+      throw new Error(`db not connected`)
+    }
     return this.client.db(this.database)
   }
 }
