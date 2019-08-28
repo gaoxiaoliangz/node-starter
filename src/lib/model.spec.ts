@@ -7,6 +7,7 @@ process.env.SECRET = '0eiu09802i3uu980'
 import { mainDB } from './db'
 import { createModel, FIELD_TYPES } from '../lib/model'
 import { delay } from '../utils'
+import _ from 'lodash'
 
 const User = createModel({
   docName: 'users',
@@ -41,7 +42,7 @@ describe('test model', () => {
     })
   })
 
-  test('test creating with empty entity', done => {
+  test('test creating entity', done => {
     User.create({
       username: 'aaa',
       password: 'aaa',
@@ -49,6 +50,41 @@ describe('test model', () => {
     }).then(user => {
       done()
     })
+  })
+
+  test('test listing', async done => {
+    const collectionName = 'col_tmp'
+    const clean = () => {
+      return mainDB
+        .getDb()
+        .collection(collectionName)
+        .drop()
+    }
+
+    const Tmp = createModel({
+      docName: collectionName,
+      schema: {
+        name: {
+          nullable: false,
+          type: FIELD_TYPES.STRING,
+        },
+      },
+    })
+
+    await clean()
+    await Promise.all(
+      _.times(20).map(n =>
+        Tmp.create({
+          // TODO: name-0 is invalid?
+          name: `name_${n}`,
+        }),
+      ),
+    )
+
+    const results = await Tmp.find()
+    expect(results.length).toBe(20)
+    await clean()
+    done()
   })
 })
 
