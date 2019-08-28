@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { ObjectID } from 'mongodb'
-import db from './db'
 import { ValidationError } from './error'
+import { DB, mainDB } from './db'
 
 export const FIELD_TYPES = {
   STRING: 'string',
@@ -65,18 +65,20 @@ export class Model {
   schema: any
   docName: string
   computed: any
+  db: DB
 
-  constructor(docName, schema, computed) {
+  constructor(docName, schema, computed, db: DB) {
     this.schema = {
       ...defaultSchema,
       ...schema,
     }
     this.docName = docName
     this.computed = computed
+    this.db = db
   }
 
   get collection() {
-    return db.getDb().collection(this.docName)
+    return this.db.getDb().collection(this.docName)
   }
 
   private _validateField(key, value) {
@@ -266,6 +268,7 @@ export class Model {
 
 interface ModelConfig {
   docName: string
+  db?: DB
   schema: {
     [field: string]: {
       nullable?: boolean // if type is string, '' is considered null
@@ -280,6 +283,6 @@ interface ModelConfig {
     [key: string]: (entity) => any
   }
 }
-export const createModel = ({ docName, schema, computed = {} }: ModelConfig) => {
-  return new Model(docName, schema, computed)
+export const createModel = ({ docName, schema, computed = {}, db = mainDB }: ModelConfig) => {
+  return new Model(docName, schema, computed, db)
 }

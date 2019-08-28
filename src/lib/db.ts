@@ -2,23 +2,21 @@ import { MongoClient } from 'mongodb'
 
 const debug = require('debug')('myapp:lib:db')
 
-const defaultDbUri = process.env.DB_URI || `mongodb://localhost:27017`
-const defaultDbName = process.env.DB_NAME
+const DB_URI = process.env.DB_URI
+const DB_NAME = process.env.DB_NAME
 
-class Db {
-  client: MongoClient
-  private connected: boolean
-
-  constructor() {
-    this.connected = false
-    this.client = null
-  }
-
-  connect(dbUri = defaultDbUri) {
-    if (this.connected) {
-      return Promise.resolve()
+const connectDB = (() => {
+  const connected = {}
+  return (dbUri = DB_URI): Promise<MongoClient> => {
+    if (connected[dbUri]) {
+      return Promise.resolve(connected[dbUri])
     }
-    this.client = new MongoClient(dbUri, { useNewUrlParser: true })
+    const client = new MongoClient(dbUri, { useNewUrlParser: true })
+    connected[dbUri] = client
+    client.on('close', () => {
+      console.log(`${dbUri} disconnected`)
+    })
+
     return new Promise((resolve, reject) => {
       this.client.connect(err => {
         this.connected = true
@@ -26,14 +24,33 @@ class Db {
           return reject(err)
         }
         debug(`connected to ${dbUri}`)
-        resolve()
+        resolve(client)
       })
     })
   }
+})()
 
-  getDb(db = defaultDbName) {
-    return this.client.db(db)
+export class DB {
+  readonly client: MongoClient
+  readonly database: string
+  readonly dbURI: string
+
+  constructor(config: { dbURI: string; database: string }) {
+    this.client = null
+    this.database = config.database
+    this.dbURI = config.dbURI
+  }
+
+  connect() {
+    return connectDB(this.dbURI)
+  }
+
+  getDb() {
+    return this.client.db(this.database)
   }
 }
 
-export default new Db()
+export const mainDB = new DB({
+  database: DB_NAME,
+  dbURI: DB_URI,
+})
