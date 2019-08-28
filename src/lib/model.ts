@@ -3,8 +3,6 @@ import { ObjectID } from 'mongodb'
 import db from './db'
 import { ValidationError } from './error'
 
-const paginate = d => d
-
 export const FIELD_TYPES = {
   STRING: 'string',
   NUMBER: 'number',
@@ -81,7 +79,7 @@ export class Model {
     return db.getDb().collection(this.docName)
   }
 
-  _validateField(key, value) {
+  private _validateField(key, value) {
     const field = this.schema[key]
     let valueType = getValueType(value)
     const fieldTypeError = new ValidationError(
@@ -109,7 +107,7 @@ export class Model {
     }
   }
 
-  _processInputEntity(
+  private _processInputEntity(
     entity,
     {
       // when `false`, undefined fields will be skipped, useful for updates
@@ -148,7 +146,7 @@ export class Model {
     return data
   }
 
-  _processOutputEntity({ _id, ...rest }) {
+  private _processOutputEntity({ _id, ...rest }) {
     const entity = {
       ...rest,
       id: _id,
@@ -159,7 +157,7 @@ export class Model {
     }
   }
 
-  _processQuery(query) {
+  private _processQuery(query) {
     return withoutUndefined(
       _.reduce(
         query,
@@ -183,10 +181,11 @@ export class Model {
     )
   }
 
-  /**
-   * @returns {Promise<any>}
-   */
-  async find({ search = null, getSearchContent = null, pagination = null, query = {} } = {}) {
+  async list() {
+    // TODO: impl
+  }
+
+  async find({ search = null, getSearchContent = null, query = {} } = {}): Promise<any> {
     const collection = this.collection
     let list = await collection
       .find(this._processQuery(query))
@@ -208,23 +207,10 @@ export class Model {
 
     list = list.map(this._processOutputEntity.bind(this))
 
-    if (!pagination) {
-      return list
-    }
-    // TODO: impl pagination
     return list
-    // return paginate(list, {
-    //   limit: _.isNumber(+pagination.limit) ? Number(pagination.limit) : undefined,
-    //   ...pagination,
-    // })
   }
 
-  /**
-   * @param {{
-   *  [key: string]: any
-   * }} query
-   */
-  async findOne(query) {
+  async findOne(query: object) {
     const collection = this.collection
     const item = await collection.findOne(this._processQuery(query))
     return item ? this._processOutputEntity(item) : null
@@ -253,11 +239,6 @@ export class Model {
     return this.findById(result.insertedId)
   }
 
-  /**
-   *
-   * @param {*} query
-   * @param {*} data
-   */
   async updateOne(query, data) {
     const collection = this.collection
     const processedQuery = this._processQuery(query)
@@ -283,24 +264,22 @@ export class Model {
   }
 }
 
-// TODO: ts 类型推导有问题
-// type: 'string' | 'number' | 'array' | 'object' | 'json' | 'boolean'
-/**
- * @param {{
- *   docName: string
- *   schema: {
- *     [field: string]: {
- *       nullable?: boolean // if type is string, '' is considered null
- *       type: string
- *       default?: any
- *       validator?: (value: any, context) => string?
- *     }
- *   }
- *   computed?: {
- *      [key: string]: (entity) => any
- *   }
- * }} config
- */
-export const createModel = ({ docName, schema, computed = {} }) => {
+interface ModelConfig {
+  docName: string
+  schema: {
+    [field: string]: {
+      nullable?: boolean // if type is string, '' is considered null
+      // TODO: ts 类型推导有问题
+      // type: 'string' | 'number' | 'array' | 'object' | 'json' | 'boolean'
+      type: string
+      default?: any
+      validator?: (value: any, context) => string
+    }
+  }
+  computed?: {
+    [key: string]: (entity) => any
+  }
+}
+export const createModel = ({ docName, schema, computed = {} }: ModelConfig) => {
   return new Model(docName, schema, computed)
 }

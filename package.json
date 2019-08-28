@@ -1,11 +1,11 @@
 {
   "name": "node-starter",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "nodemon",
     "dev:ts-node": "nodemon --config nodemon.ts-node.json",
-    "start": "node dist/main.js",
+    "serve:prod": "NODE_ENV=production node -r dotenv/config dist/main.js",
     "prebuild": "rm -rf dist",
     "watch": "yarn build --watch",
     "build": "tsc -p tsconfig.build.json",

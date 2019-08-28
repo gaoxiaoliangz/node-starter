@@ -15,6 +15,10 @@ export const profile = async req => {
   return _.omit(user, ['password'])
 }
 
+export const list = async req => {
+  return User.list()
+}
+
 export const login = async req => {
   const { username, password } = req.body
   if (!username || !password) {

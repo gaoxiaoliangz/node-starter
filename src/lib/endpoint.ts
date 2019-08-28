@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { DefinedError } from './error'
 
-const isPromise = obj => {
+const isThenable = obj => {
   try {
     return typeof obj.then === 'function'
   } catch (error) {
@@ -20,7 +20,7 @@ export const endpoint = fn => {
     }
     try {
       const result = fn(req)
-      if (isPromise(result)) {
+      if (isThenable(result)) {
         return result
           .then(data => {
             handleResult(data)
