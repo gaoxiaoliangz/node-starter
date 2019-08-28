@@ -1,8 +1,7 @@
-import debugFactory from 'debug'
-const debug = debugFactory('myapp:api:uploads')
+const debug = require('debug')('myapp:api:uploads')
 
 export const commonUpload = object => {
-  debug('uploading file', object.path)
+  debug('file uploaded to', object.path)
   return {
     filePath: object.path,
   }

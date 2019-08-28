@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { ObjectID } from 'mongodb'
-import { getDb } from '../db'
+import db from './db'
 import { ValidationError } from '../error'
 
 const paginate = d => d
@@ -78,7 +78,7 @@ export class Model {
   }
 
   get collection() {
-    return getDb().collection(this.docName)
+    return db.getDb().collection(this.docName)
   }
 
   _validateField(key, value) {

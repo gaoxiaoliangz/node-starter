@@ -1,6 +1,4 @@
 import express from 'express'
-import debugFactory from 'debug'
-const debug = debugFactory('myapp:rest-api')
 import multer from 'multer'
 import os from 'os'
 import api from '../api'
@@ -8,18 +6,19 @@ import cors from '../middlewares/cors'
 import { endpoint } from '../lib/endpoint'
 import { NotFoundError } from '../error'
 import { renderError } from '../middlewares/error'
+import { auth } from '../middlewares/auth'
 
-const restAPIApp = express.Router()
+const debug = require('debug')('myapp:web:api')
 
 const upload = multer({
   dest: os.tmpdir(),
 })
 
-const setupRoutes = () => {
+const setupAPIRoutes = () => {
   const router = express.Router()
 
   // users
-  router.get('/profile', endpoint(api.users.profile))
+  router.get('/profile', auth(), endpoint(api.users.profile))
   router.post('/login', endpoint(api.users.login))
   router.post('/signup', endpoint(api.users.signup))
 
@@ -40,10 +39,8 @@ const setupRoutes = () => {
   return router
 }
 
-const restAPI = () => {
-  debug('API up')
-  restAPIApp.use(cors(), setupRoutes())
-  return restAPIApp
+export const setupAPI = () => {
+  const router = express.Router()
+  router.use(cors(), setupAPIRoutes())
+  return router
 }
-
-export default restAPI

@@ -1,7 +1,4 @@
-export const ERROR_CODES = {
-  UNAUTHORIZED: 1001,
-  INVALID_TOKEN: 1002,
-}
+import { ERROR_CODES } from './constants'
 
 const isEnvDevelopment = process.env.NODE_ENV === 'development'
 
