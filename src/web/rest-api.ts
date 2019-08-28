@@ -4,9 +4,10 @@ const debug = debugFactory('myapp:rest-api')
 import multer from 'multer'
 import os from 'os'
 import api from '../api'
-import errorHandler from '../middlewares/error-handler'
 import cors from '../middlewares/cors'
 import { endpoint } from '../lib/endpoint'
+import { NotFoundError } from '../error'
+import { renderError } from '../middlewares/error'
 
 const restAPIApp = express.Router()
 
@@ -29,8 +30,12 @@ const setupRoutes = () => {
   // uploads
   router.post('/uploads', upload.single('file'), endpoint(api.uploads.commonUpload))
 
+  router.use((req, res, next) => {
+    next(new NotFoundError(`${req.path} not found`))
+  })
+
   // handle error
-  router.use(errorHandler.render)
+  router.use(renderError())
 
   return router
 }

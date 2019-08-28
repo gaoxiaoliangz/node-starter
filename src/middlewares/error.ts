@@ -3,7 +3,7 @@ import { DefinedError, UnauthorizedError, NotFoundError } from '../error'
 const debug = require('debug')('myapp:middlewares:apperror')
 const isEnvDevelopment = process.env.NODE_ENV === 'development'
 
-export const appError = () => (err, req, res, next) => {
+export const renderError = ({ renderPage = false } = {}) => (err, req, res, next) => {
   let statusCode = 500
   let errorCode
   let errors
@@ -23,12 +23,19 @@ export const appError = () => (err, req, res, next) => {
       statusCode = 400
     }
   }
-  debug(`APP_ERROR:`, err)
-  res.status(statusCode).send({
+  debug(err)
+  const errObject = {
     code: errorCode,
     message: err.message || 'Unknown error occurred',
     details: err.details,
     ...((isEnvDevelopment || statusCode === 500) && { stack: err.stack }),
     errors,
-  })
+  }
+
+  if (renderPage) {
+    return res.status(statusCode).render('error', {
+      error: errObject,
+    })
+  }
+  res.status(statusCode).send(errObject)
 }
