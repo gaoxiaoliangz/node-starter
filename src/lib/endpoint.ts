@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { DefinedError } from '../error'
+import { DefinedError } from './error'
 
 const isPromise = obj => {
   try {

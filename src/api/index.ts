@@ -1,9 +1,7 @@
-import * as logs from './logs'
 import * as users from './users'
-import * as uploads from './uploads'
+import * as common from './common'
 
 export default {
-  logs,
   users,
-  uploads,
+  common,
 }

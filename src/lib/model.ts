@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { ObjectID } from 'mongodb'
 import db from './db'
-import { ValidationError } from '../error'
+import { ValidationError } from './error'
 
 const paginate = d => d
 

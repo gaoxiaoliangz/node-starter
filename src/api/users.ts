@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import md5 from 'md5'
 import jsonwebtoken from 'jsonwebtoken'
-import { UnauthorizedError, ValidationError } from '../error'
+import { UnauthorizedError, ValidationError } from '../lib/error'
 import { User } from '../models'
 import { ROLES } from '../constants'
 

@@ -1,4 +1,4 @@
-import { DefinedError, UnauthorizedError, NotFoundError } from '../error'
+import { DefinedError, UnauthorizedError, NotFoundError } from '../lib/error'
 
 const debug = require('debug')('myapp:middlewares:apperror')
 const isEnvDevelopment = process.env.NODE_ENV === 'development'

@@ -1,4 +1,4 @@
-import { ERROR_CODES } from './constants'
+import { ERROR_CODES } from '../constants'
 
 const isEnvDevelopment = process.env.NODE_ENV === 'development'
 
