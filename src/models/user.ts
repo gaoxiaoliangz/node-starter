@@ -1,4 +1,6 @@
-import { BaseModel, model, field, FIELD_TYPES } from '../lib/model'
+import { BaseModel } from '../lib/db/model'
+import { model, field } from '../lib/db/decorators'
+import { FIELD_TYPES } from '../lib/db/types'
 
 // import { createModel, FIELD_TYPES } from '../lib/model'
 // export default createModel({
@@ -36,12 +38,6 @@ export class User extends BaseModel {
   })
   role: string
 }
-
-// export interface ModelClass<T> {
-//   collection: string
-
-//   new (): T
-// }
 
 // export class Model<Schema> {
 //   static collection: string

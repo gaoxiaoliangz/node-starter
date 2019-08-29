@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb'
-import { Model, ModelClass } from '../models/user'
+import { modelGlobalScope, BaseModel } from './model'
+import { ObjectType } from './types'
 
 const debug = require('debug')('myapp:lib:db')
 
@@ -47,11 +48,19 @@ export class DB {
     return connectDB(this.dbURI).then(client => (this.client = client))
   }
 
-  getDb() {
+  get current() {
     if (!this.client) {
       throw new Error(`db not connected`)
     }
     return this.client.db(this.database)
+  }
+
+  getCollection<T extends BaseModel>(modelClass: ObjectType<T>) {
+    const name = modelGlobalScope.get(modelClass)
+    if (!name) {
+      throw new Error(`${modelClass.name} cannot be resolved`)
+    }
+    return this.current.collection<T>(name)
   }
 
   // find<T>(modelClass: ModelClass<Model<T>>, query, session?) {
@@ -61,11 +70,11 @@ export class DB {
   // }
 }
 
-export class Repo {
-  find(modelClass) {}
-}
+// export class Repo {
+//   find(modelClass) {}
+// }
 
-export const mainDB = new DB({
+export const db = new DB({
   database: DB_NAME,
   dbURI: DB_URI,
 })

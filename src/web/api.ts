@@ -22,9 +22,9 @@ const setupAPIRoutes = () => {
   // users
   // TODO
   router.get('/users', endpoint(api.users.list))
-  router.get('/profile', auth(), endpoint(api.users.profile))
-  router.post('/login', endpoint(api.users.login))
-  router.post('/signup', endpoint(api.users.signup))
+  // router.get('/profile', auth(), endpoint(api.users.profile))
+  // router.post('/login', endpoint(api.users.login))
+  // router.post('/signup', endpoint(api.users.signup))
 
   // uploads
   router.post('/uploads', upload.single('file'), endpoint(api.common.upload))

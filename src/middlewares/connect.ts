@@ -1,8 +1,7 @@
-import { mainDB } from '../lib/db'
+import { db } from '../lib/db/db'
 
 export const connectDB = () => (req, res, next) => {
-  mainDB
-    .connect()
+  db.connect()
     .then(() => next())
     .catch(next)
 }
