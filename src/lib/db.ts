@@ -1,4 +1,5 @@
 import { MongoClient } from 'mongodb'
+import { Model, ModelClass } from '../models/user'
 
 const debug = require('debug')('myapp:lib:db')
 
@@ -52,6 +53,16 @@ export class DB {
     }
     return this.client.db(this.database)
   }
+
+  // find<T>(modelClass: ModelClass<Model<T>>, query, session?) {
+  //   const collection = modelClass.collection
+  //   const ctx = this.getDb().collection(collection)
+  //   return ctx.find.call(ctx, query, session)
+  // }
+}
+
+export class Repo {
+  find(modelClass) {}
 }
 
 export const mainDB = new DB({
