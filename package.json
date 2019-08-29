@@ -3,17 +3,17 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
+    "watch": "yarn build --watch",
     "dev": "nodemon",
     "dev:ts-node": "nodemon --config nodemon.ts-node.json",
-    "serve:prod": "NODE_ENV=production node -r dotenv/config dist/main.js",
-    "prebuild": "rm -rf dist",
-    "watch": "yarn build --watch",
-    "build": "tsc -p tsconfig.build.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:debug:win": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ./node_modules/jest/bin/jest.js --runInBand",
+    "test:cov": "jest --coverage",
+    "prebuild": "rm -rf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "serve:prod": "NODE_ENV=production node -r dotenv/config dist/main.js",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
