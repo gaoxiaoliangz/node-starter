@@ -11,22 +11,13 @@ import { field, model } from './decorators'
 import { FIELD_TYPES } from './types'
 import { delay } from '../../utils'
 
-@model('users')
-export class User extends BaseModel {
-  @field({
-    type: FIELD_TYPES.STRING,
-  })
-  username: string
-
-  @field({
-    type: FIELD_TYPES.STRING,
-  })
-  password: string
-
-  @field({
-    type: FIELD_TYPES.STRING,
-  })
-  role: string
+const dropColl = async collectionName => {
+  const coll = db.current.collection(collectionName)
+  const result = await coll.find().toArray()
+  if (result.length) {
+    console.log('dropped', collectionName)
+    return coll.drop()
+  }
 }
 
 beforeAll(async () => {
@@ -36,51 +27,31 @@ beforeAll(async () => {
   })
 })
 
-describe('test model', () => {
-  // test('test creating with empty entity', done => {
-  //   User.create({}).catch(err => {
-  //     expect(err.message).toBe(`users.username[string] is required`)
-  //     done()
-  //   })
-  // })
-
-  // test('test creating entity', done => {
-  //   User.create({
-  //     username: 'aaa',
-  //     password: 'aaa',
-  //     role: 'user',
-  //   }).then(user => {
-  //     done()
-  //   })
-  // })
-
-  test('test listing', async done => {
+describe('model', () => {
+  test('insertOne & find', async done => {
     const collectionName = 'coll_tmp'
-    const clean = () => {
-      return db.current.collection(collectionName).drop()
-    }
 
     @model(collectionName)
-    class Tmp extends BaseModel {
+    class TestModel extends BaseModel {
       @field({
         type: FIELD_TYPES.STRING,
       })
       name: string
     }
 
-    await clean()
+    await dropColl(collectionName)
     const inserted = await Promise.all(
       _.times(20).map(n => {
-        return Tmp.insertOne({
+        return TestModel.insertOne({
           name: `name_${n}`,
         })
       }),
     )
-
-    const container = Tmp.find()
-    const rawResult = await container.cursor.toArray()
+    // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
+    await delay(100)
+    const rawResult = await TestModel.find().cursor.toArray()
     expect(rawResult.length).toBe(20)
-    await clean()
+    await dropColl(collectionName)
     done()
   })
 })

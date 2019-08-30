@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb'
-import { modelGlobalScope, BaseModel } from './model'
+import { metadataStorage, BaseModel } from './model'
 import { ObjectType } from './types'
 
 const debug = require('debug')('myapp:lib:db')
@@ -56,23 +56,13 @@ export class DB {
   }
 
   getCollection<T extends BaseModel>(modelClass: ObjectType<T>) {
-    const name = modelGlobalScope.get(modelClass)
-    if (!name) {
+    const match = metadataStorage.getMetadataByClass(modelClass)
+    if (!match) {
       throw new Error(`${modelClass.name} cannot be resolved`)
     }
-    return this.current.collection<T>(name)
+    return this.current.collection<T>(match.name as string)
   }
-
-  // find<T>(modelClass: ModelClass<Model<T>>, query, session?) {
-  //   const collection = modelClass.collection
-  //   const ctx = this.getDb().collection(collection)
-  //   return ctx.find.call(ctx, query, session)
-  // }
 }
-
-// export class Repo {
-//   find(modelClass) {}
-// }
 
 export const db = new DB({
   database: DB_NAME,
