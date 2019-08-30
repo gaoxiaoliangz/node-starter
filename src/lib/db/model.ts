@@ -105,20 +105,17 @@ export class BaseModel {
     return Promise.resolve(data)
   }
 
-  static insertOne<T extends BaseModel>(this: ObjectType<T>, data?: Partial<T>): Promise<T> {
+  static async insertOne<T extends BaseModel>(this: ObjectType<T>, data: Partial<T>): Promise<T> {
     const self: any = this
-    return self
-      .from({
-        createdAt: new Date(),
-        ...data,
-      })
-      .save()
+    return self.from(data).save()
   }
 
   static from<T extends BaseModel>(this: ObjectType<T>, data: Partial<T>): T {
     const self: any = this
     const { fields, name } = metadataStorage.getMetadataByClass(self)
-    const finalData = {}
+    const finalData = {
+      createdAt: new Date(),
+    }
 
     for (let key of Object.keys(data)) {
       const field = fields[key]
@@ -144,10 +141,18 @@ export class BaseModel {
 
   @field({
     type: FIELD_TYPES.DATE,
+    nullable: true,
   })
   updatedAt: Date
 
-  validate() {}
+  // TODO: should not be async
+  async validate() {
+    const { fields } = metadataStorage.getMetadataByInstance(this)
+    for (let key of Object.keys(fields)) {
+      const field = fields[key]
+      field.validate(this[key])
+    }
+  }
 
   toDoc() {
     const doc = {}
@@ -160,7 +165,7 @@ export class BaseModel {
 
   async save() {
     const { name } = metadataStorage.getMetadataByInstance(this)
-    this.validate()
+    await this.validate()
     await db.current.collection(name as string).insertOne(this.toDoc())
     return this
   }

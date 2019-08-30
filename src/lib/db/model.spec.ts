@@ -11,6 +11,35 @@ import { field, model } from './decorators'
 import { FIELD_TYPES } from './types'
 import { delay } from '../../utils'
 
+const testCollectionPosts = 'test_posts'
+const testCollectionUsers = 'test_users'
+
+@model(testCollectionPosts)
+class TestPostModel extends BaseModel {
+  @field({
+    type: FIELD_TYPES.STRING,
+  })
+  title: string
+
+  @field({
+    type: FIELD_TYPES.STRING,
+    validate: val => {
+      if (!['published', 'draft'].includes(val)) {
+        throw new Error(`status is not valid`)
+      }
+    },
+  })
+  status: string
+}
+
+@model(testCollectionUsers)
+class TestUserModel extends BaseModel {
+  @field({
+    type: FIELD_TYPES.STRING,
+  })
+  username: string
+}
+
 const dropColl = async collectionName => {
   const coll = db.current.collection(collectionName)
   const result = await coll.find().toArray()
@@ -20,71 +49,76 @@ const dropColl = async collectionName => {
   }
 }
 
-const withCollection = async collName => async test => {
-  await dropColl(collName)
-  await test(collName)
-  await dropColl(collName)
+const clearDb = async () => {
+  await dropColl(testCollectionPosts)
+  await dropColl(testCollectionUsers)
 }
 
 beforeAll(async () => {
-  return db.connect().catch(err => {
+  await db.connect().catch(err => {
     // https://github.com/facebook/jest/issues/2713
     process.exit(1)
   })
+  await clearDb()
 })
 
 describe('model', () => {
-  test('insertOne & find', async done => {
-    const collectionName = 'coll_tmp'
-
-    @model(collectionName)
-    class TestModel extends BaseModel {
-      @field({
-        type: FIELD_TYPES.STRING,
-      })
-      name: string
-    }
-
-    await dropColl(collectionName)
-    const inserted = await Promise.all(
+  test('insertOne & find', async () => {
+    await dropColl(testCollectionPosts)
+    await Promise.all(
       _.times(20).map(n => {
-        return TestModel.insertOne({
-          name: `name_${n}`,
+        return TestPostModel.insertOne({
+          title: `name_${n}`,
+          status: 'published',
         })
       }),
     )
     // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
     await delay(100)
-    const rawResult = await TestModel.find().cursor.toArray()
+    const rawResult = await TestPostModel.find().cursor.toArray()
     expect(rawResult.length).toBe(20)
-    await dropColl(collectionName)
-    done()
+    await dropColl(testCollectionPosts)
   })
 
   test('test null check', async () => {
-    const collectionName = 'coll_tmp2'
-    await dropColl(collectionName)
-
-    @model(collectionName)
-    class TestModel extends BaseModel {
-      @field({
-        type: FIELD_TYPES.STRING,
-      })
-      name: string
-    }
-
     let error = null
-    await TestModel.from({})
+    await TestPostModel.from({})
       .save()
       .catch(async err => {
         error = err
       })
+    expect(error.message).toBe('title is not nullable')
     expect(error).not.toBe(null)
-    await dropColl(collectionName)
   })
+
+  test('test field custom validator', async () => {
+    let error = null
+    // TODO: from should not throw
+    // await TestPostModel.from({
+    //   title: 'test1',
+    //   status: 'ok',
+    // })
+    //   .save()
+    //   .catch(async err => {
+    //     error = err
+    //   })
+
+    await TestPostModel.insertOne({
+      title: 'test1',
+      status: 'ok',
+    }).catch(async err => {
+      error = err
+    })
+
+    expect(error.message).toBe('status is not valid')
+    expect(error).not.toBe(null)
+  })
+
+  // TODO: field type test
 })
 
 afterAll(async () => {
   await delay(100)
-  db.client.close()
+  await clearDb()
+  await db.client.close()
 })
