@@ -158,10 +158,10 @@ export class BaseModel {
     return doc
   }
 
-  save() {
+  async save() {
     const { name } = metadataStorage.getMetadataByInstance(this)
     this.validate()
-    db.current.collection(name as string).insertOne(this.toDoc())
+    await db.current.collection(name as string).insertOne(this.toDoc())
     return this
   }
 

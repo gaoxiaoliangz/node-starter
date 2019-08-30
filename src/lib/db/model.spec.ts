@@ -20,6 +20,12 @@ const dropColl = async collectionName => {
   }
 }
 
+const withCollection = async collName => async test => {
+  await dropColl(collName)
+  await test(collName)
+  await dropColl(collName)
+}
+
 beforeAll(async () => {
   return db.connect().catch(err => {
     // https://github.com/facebook/jest/issues/2713
@@ -54,9 +60,31 @@ describe('model', () => {
     await dropColl(collectionName)
     done()
   })
+
+  test('test null check', async () => {
+    const collectionName = 'coll_tmp2'
+    await dropColl(collectionName)
+
+    @model(collectionName)
+    class TestModel extends BaseModel {
+      @field({
+        type: FIELD_TYPES.STRING,
+      })
+      name: string
+    }
+
+    let error = null
+    await TestModel.from({})
+      .save()
+      .catch(async err => {
+        error = err
+      })
+    expect(error).not.toBe(null)
+    await dropColl(collectionName)
+  })
 })
 
-afterAll(() => {
+afterAll(async () => {
+  await delay(100)
   db.client.close()
-  return delay(100)
 })
