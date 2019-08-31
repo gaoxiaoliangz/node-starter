@@ -16,3 +16,17 @@ export const delay = t =>
   new Promise(resolve => {
     setTimeout(resolve, t)
   })
+
+export const createOneOffFn = (fn: Function, onCalledMoreThanOnce?: Function) => {
+  let called = false
+  return (...args) => {
+    if (called) {
+      if (onCalledMoreThanOnce) {
+        return onCalledMoreThanOnce()
+      }
+      return
+    }
+    called = true
+    return fn(...args)
+  }
+}

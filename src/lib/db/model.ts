@@ -1,4 +1,4 @@
-import { db } from './db'
+import { dbClient } from './db'
 import { ObjectType, FIELD_TYPES } from './types'
 import { Collection, Cursor } from 'mongodb'
 import { field, Field, model, BASE_SYMBOL } from './decorators'
@@ -93,11 +93,12 @@ export class BaseModel {
   static collection: string
 
   static getCollection<T extends BaseModel>(this: ObjectType<T>): Collection<T> {
-    return db.getCollection(this)
+    return dbClient.getCollectionByClass(this)
   }
 
   static find<T extends BaseModel>(this: ObjectType<T>, query?): CursorContainer<T> {
-    const cursor = db.getCollection(this).find(query)
+    const self: any = this
+    const cursor = self.getCollection(this).find(query)
     return new CursorContainer<T>(cursor)
   }
 
@@ -167,7 +168,7 @@ export class BaseModel {
   async save() {
     const { name } = metadataStorage.getMetadataByInstance(this)
     await this.validate()
-    await db.current.collection(name as string).insertOne(this.toDoc())
+    await dbClient.db.collection(name as string).insertOne(this.toDoc())
     return this
   }
 

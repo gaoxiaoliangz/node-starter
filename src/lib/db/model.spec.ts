@@ -1,21 +1,24 @@
 // TODO: can it be placed in jest.config?
 process.env.DEBUG = 'myapp:*'
-process.env.DB_NAME = 'node_starter_test'
-process.env.DB_URI = 'mongodb://localhost:27017'
 process.env.SECRET = '0eiu09802i3uu980'
 
-import { db } from './db'
-import { BaseModel } from './model'
 import _ from 'lodash'
+import { dbClient, initDB } from './db'
+import { BaseModel } from './model'
 import { field, model } from './decorators'
 import { FIELD_TYPES } from './types'
 import { delay } from '../../utils'
 
-const testCollectionPosts = 'test_posts'
-const testCollectionUsers = 'test_users'
+const postsCollectionName = 'posts'
+const usersCollectionName = 'users'
 
-@model(testCollectionPosts)
-class TestPostModel extends BaseModel {
+initDB({
+  dbName: 'node_starter_test',
+  dbURI: 'mongodb://localhost:27017',
+})
+
+@model(postsCollectionName)
+class PostModel extends BaseModel {
   @field({
     type: FIELD_TYPES.STRING,
   })
@@ -32,8 +35,8 @@ class TestPostModel extends BaseModel {
   status: string
 }
 
-@model(testCollectionUsers)
-class TestUserModel extends BaseModel {
+@model(usersCollectionName)
+class UserModel extends BaseModel {
   @field({
     type: FIELD_TYPES.STRING,
   })
@@ -41,7 +44,7 @@ class TestUserModel extends BaseModel {
 }
 
 const dropColl = async collectionName => {
-  const coll = db.current.collection(collectionName)
+  const coll = dbClient.db.collection(collectionName)
   const result = await coll.find().toArray()
   if (result.length) {
     console.log('dropped', collectionName)
@@ -50,24 +53,25 @@ const dropColl = async collectionName => {
 }
 
 const clearDb = async () => {
-  await dropColl(testCollectionPosts)
-  await dropColl(testCollectionUsers)
+  await dropColl(postsCollectionName)
+  await dropColl(usersCollectionName)
 }
 
 beforeAll(async () => {
-  await db.connect().catch(err => {
+  await dbClient.connect().catch(err => {
     // https://github.com/facebook/jest/issues/2713
-    process.exit(1)
+    console.log(err)
+    return Promise.reject(err)
   })
   await clearDb()
 })
 
 describe('model', () => {
   test('insertOne & find', async () => {
-    await dropColl(testCollectionPosts)
+    await dropColl(postsCollectionName)
     await Promise.all(
       _.times(20).map(n => {
-        return TestPostModel.insertOne({
+        return PostModel.insertOne({
           title: `name_${n}`,
           status: 'published',
         })
@@ -75,14 +79,14 @@ describe('model', () => {
     )
     // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
     await delay(100)
-    const rawResult = await TestPostModel.find().cursor.toArray()
+    const rawResult = await PostModel.find().cursor.toArray()
     expect(rawResult.length).toBe(20)
-    await dropColl(testCollectionPosts)
+    await dropColl(postsCollectionName)
   })
 
   test('test null check', async () => {
     let error = null
-    await TestPostModel.from({})
+    await PostModel.from({})
       .save()
       .catch(async err => {
         error = err
@@ -94,7 +98,7 @@ describe('model', () => {
   test('test field custom validator', async () => {
     let error = null
 
-    await TestPostModel.insertOne({
+    await PostModel.insertOne({
       title: 'test1',
       status: 'ok',
     }).catch(async err => {
@@ -106,7 +110,7 @@ describe('model', () => {
   })
 
   test('from should not throw', async () => {
-    await TestPostModel.from({
+    await PostModel.from({
       title: 'test1',
       status: 'ok',
     })
@@ -118,5 +122,5 @@ describe('model', () => {
 afterAll(async () => {
   await delay(100)
   await clearDb()
-  await db.client.close()
+  await dbClient.current.close()
 })

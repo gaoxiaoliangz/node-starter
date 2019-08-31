@@ -1,7 +1,8 @@
-import { db } from '../lib/db/db'
+import { dbClient } from '../lib/db/db'
 
 export const connectDB = () => (req, res, next) => {
-  db.connect()
+  dbClient
+    .connect()
     .then(() => next())
     .catch(next)
 }

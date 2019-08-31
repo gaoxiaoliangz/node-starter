@@ -1,15 +1,14 @@
 import { MongoClient } from 'mongodb'
 import { metadataStorage, BaseModel } from './model'
 import { ObjectType } from './types'
+import { createOneOffFn } from '../../utils'
 
 const debug = require('debug')('myapp:lib:db')
 
-const DB_URI = process.env.DB_URI
-const DB_NAME = process.env.DB_NAME
-
 const connectDB = (() => {
   const connected = {}
-  return (dbUri = DB_URI): Promise<MongoClient> => {
+  // https://docs.mongodb.com/manual/reference/connection-string/#standard-connection-string-format
+  return (dbUri: string): Promise<MongoClient> => {
     if (connected[dbUri]) {
       return Promise.resolve(connected[dbUri])
     }
@@ -33,38 +32,91 @@ const connectDB = (() => {
   }
 })()
 
-export class DB {
-  client: MongoClient
-  readonly database: string
-  readonly dbURI: string
+export class DBClient {
+  current: MongoClient
 
-  constructor(config: { dbURI: string; database: string }) {
-    this.client = null
-    this.database = config.database
-    this.dbURI = config.dbURI
+  constructor(private config: DBConfig) {
+    this.current = null
   }
 
-  connect() {
-    return connectDB(this.dbURI).then(client => (this.client = client))
+  async connect() {
+    if (!this.config.ready) {
+      throw new Error(`db config not ready`)
+    }
+    const client = await connectDB(this.config.dbURI)
+    this.current = client
+    return client
   }
 
-  get current() {
-    if (!this.client) {
+  get db() {
+    if (!this.current) {
       throw new Error(`db not connected`)
     }
-    return this.client.db(this.database)
+    return this.current.db(this.config.dbName)
   }
 
-  getCollection<T extends BaseModel>(modelClass: ObjectType<T>) {
+  getCollectionByClass<T extends BaseModel>(modelClass: ObjectType<T>) {
     const match = metadataStorage.getMetadataByClass(modelClass)
     if (!match) {
       throw new Error(`${modelClass.name} cannot be resolved`)
     }
-    return this.current.collection<T>(match.name as string)
+    return this.db.collection<T>(match.name as string)
   }
 }
 
-export const db = new DB({
-  database: DB_NAME,
-  dbURI: DB_URI,
-})
+class DBConfig {
+  private _dbName: string
+  private _dbURI: string
+
+  private setDbName = createOneOffFn(
+    name => {
+      this._dbName = name
+    },
+    () => {
+      throw new Error(`dbName can only be set once`)
+    },
+  )
+
+  private setDbURI = createOneOffFn(
+    uri => {
+      this._dbURI = uri
+    },
+    () => {
+      throw new Error(`dbURI can only be set once`)
+    },
+  )
+
+  get dbName() {
+    return this._dbName
+  }
+
+  set dbName(name: string) {
+    this.setDbName(name)
+  }
+
+  get dbURI() {
+    return this._dbURI
+  }
+
+  set dbURI(uri: string) {
+    this.setDbURI(uri)
+  }
+
+  get ready() {
+    return this._dbName && this._dbURI
+  }
+}
+
+const dbConfig = new DBConfig()
+
+interface InitDBConfig {
+  dbName: string
+  dbURI: string
+}
+
+export const initDB = (config: InitDBConfig) => {
+  dbConfig.dbName = config.dbName
+  dbConfig.dbURI = config.dbURI
+}
+
+export const dbClient = new DBClient(dbConfig)

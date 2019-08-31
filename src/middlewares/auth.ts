@@ -2,7 +2,7 @@ import jwt from 'express-jwt'
 import { ObjectID } from 'mongodb'
 import express from 'express'
 import { UnauthorizedError } from '../lib/error'
-import { db } from '../lib/db/db'
+import { dbClient } from '../lib/db/db'
 
 const SECRET = process.env.SECRET
 
@@ -18,7 +18,7 @@ export const auth = () => {
     }
     // @ts-ignore
     const userId = new ObjectID(req.user.sub)
-    const match = await db.current.collection('users').findOne({
+    const match = await dbClient.db.collection('users').findOne({
       _id: userId,
     })
     if (!match) {
