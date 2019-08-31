@@ -1,4 +1,4 @@
-import { DefinedError, UnauthorizedError, NotFoundError } from '../lib/error'
+import { DefinedError, UnauthorizedError, NotFoundError, RuntimeError } from '../lib/error'
 
 const debug = require('debug')('myapp:middlewares:apperror')
 const isEnvDevelopment = process.env.NODE_ENV === 'development'
@@ -19,6 +19,8 @@ export const renderError = ({ renderPage = false } = {}) => (err, req, res, next
       statusCode = 401
     } else if (err instanceof NotFoundError) {
       statusCode = 404
+    } else if (err instanceof RuntimeError) {
+      statusCode = 500
     } else {
       statusCode = 400
     }

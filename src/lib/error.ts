@@ -77,3 +77,10 @@ export class NotFoundError extends DefinedError {
     Object.setPrototypeOf(this, NotFoundError.prototype)
   }
 }
+
+export class RuntimeError extends DefinedError {
+  constructor(msg: string, exts?: Exts) {
+    super(msg, exts)
+    Object.setPrototypeOf(this, RuntimeError.prototype)
+  }
+}

@@ -5,7 +5,7 @@ import { Field } from './field'
 export const field = (config: FieldConfig = {}) => (target, prop) => {
   const finalConfig = {
     name: prop,
-    nullable: false,
+    nullable: true,
     type: FieldTypes.String,
     ...config,
   }

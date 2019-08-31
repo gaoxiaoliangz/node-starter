@@ -21,8 +21,24 @@ initDB({
 class PostModel extends BaseModel {
   @field({
     type: FieldTypes.String,
+    nullable: false,
   })
   title: string
+
+  @field({
+    type: FieldTypes.Number,
+  })
+  count: number
+
+  @field({
+    type: FieldTypes.Date,
+  })
+  publishedAt: Date
+
+  @field({
+    type: FieldTypes.ID,
+  })
+  authorId: string
 
   @field({
     type: FieldTypes.String,
@@ -66,7 +82,7 @@ beforeAll(async () => {
   await clearDb()
 })
 
-describe('model', () => {
+describe('model CRUD', () => {
   test('insertOne & find', async () => {
     await dropColl(postsCollectionName)
     await Promise.all(
@@ -84,39 +100,59 @@ describe('model', () => {
     await dropColl(postsCollectionName)
   })
 
-  test('test null check', async () => {
-    let error = null
-    await PostModel.from({})
-      .save()
-      .catch(async err => {
-        error = err
-      })
-    expect(error.message).toBe('title is not nullable')
-    expect(error).not.toBe(null)
-  })
-
-  test('test field custom validator', async () => {
-    let error = null
-
+  test('insertOne test field custom validator using ', async () => {
+    expect.assertions(1)
     await PostModel.insertOne({
       title: 'test1',
       status: 'ok',
-    }).catch(async err => {
-      error = err
-    })
-
-    expect(error.message).toBe('status is not valid')
-    expect(error).not.toBe(null)
-  })
-
-  test('from should not throw', async () => {
-    await PostModel.from({
-      title: 'test1',
-      status: 'ok',
+    }).catch(error => {
+      expect(error.message).toBe('status is not valid')
     })
   })
+})
 
-  // TODO: field type test
+describe('model field validation', () => {
+  test('test field null check', async () => {
+    expect.assertions(1)
+    await PostModel.from({})
+      .save()
+      .catch(async err => {
+        expect(err.message).toBe('title is not nullable')
+      })
+  })
+
+  test('test custom validator', () => {
+    expect(() => {
+      PostModel.from({
+        title: 'test1',
+        status: 'ok',
+      })
+    }).toThrow('status is not valid')
+  })
+
+  test('test field type string', () => {
+    expect(() => {
+      PostModel.from({
+        title: (1 as any) as string,
+      })
+    }).toThrow('title is not of type String')
+  })
+
+  test('test field type id', () => {
+    expect(() => {
+      PostModel.from({
+        authorId: 'abc',
+      })
+    }).toThrow('authorId is not of type ID')
+  })
+
+  test('test field type date', () => {
+    expect(() => {
+      PostModel.from({
+        publishedAt: ('aaa' as any) as Date,
+      })
+    }).toThrow('publishedAt is not of type Date')
+  })
 })
 
 afterAll(async () => {

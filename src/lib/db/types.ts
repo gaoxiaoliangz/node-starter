@@ -1,7 +1,7 @@
 export type ObjectType<T> = { new (): T } | Function
 
-export const enum FieldTypes {
-  String,
+export enum FieldTypes {
+  String = 1,
   Number,
   Object,
   Array,

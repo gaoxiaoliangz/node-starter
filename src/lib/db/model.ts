@@ -63,6 +63,7 @@ export class BaseModel {
 
   @field({
     type: FieldTypes.Date,
+    nullable: false,
   })
   createdAt: Date
 
