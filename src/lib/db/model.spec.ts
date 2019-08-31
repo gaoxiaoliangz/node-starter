@@ -93,15 +93,6 @@ describe('model', () => {
 
   test('test field custom validator', async () => {
     let error = null
-    // TODO: from should not throw
-    // await TestPostModel.from({
-    //   title: 'test1',
-    //   status: 'ok',
-    // })
-    //   .save()
-    //   .catch(async err => {
-    //     error = err
-    //   })
 
     await TestPostModel.insertOne({
       title: 'test1',
@@ -112,6 +103,13 @@ describe('model', () => {
 
     expect(error.message).toBe('status is not valid')
     expect(error).not.toBe(null)
+  })
+
+  test('from should not throw', async () => {
+    await TestPostModel.from({
+      title: 'test1',
+      status: 'ok',
+    })
   })
 
   // TODO: field type test

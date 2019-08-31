@@ -101,6 +101,7 @@ export class BaseModel {
     return new CursorContainer<T>(cursor)
   }
 
+  // TODO
   private static validate<T extends BaseModel>(this: ObjectType<T>, data?: any): Promise<T> {
     return Promise.resolve(data)
   }
