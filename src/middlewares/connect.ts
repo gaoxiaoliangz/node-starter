@@ -1,4 +1,4 @@
-import { dbClient } from '../lib/db/db'
+import { dbClient } from '../lib/db'
 
 export const connectDB = () => (req, res, next) => {
   dbClient

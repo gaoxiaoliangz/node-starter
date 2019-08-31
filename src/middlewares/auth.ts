@@ -2,7 +2,7 @@ import jwt from 'express-jwt'
 import { ObjectID } from 'mongodb'
 import express from 'express'
 import { UnauthorizedError } from '../lib/error'
-import { dbClient } from '../lib/db/db'
+import { dbClient } from '../lib/db'
 
 const SECRET = process.env.SECRET
 

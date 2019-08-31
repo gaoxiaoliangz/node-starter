@@ -3,11 +3,11 @@ process.env.DEBUG = 'myapp:*'
 process.env.SECRET = '0eiu09802i3uu980'
 
 import _ from 'lodash'
-import { dbClient, initDB } from './db'
 import { BaseModel } from './model'
 import { field, model } from './decorators'
 import { FIELD_TYPES } from './types'
 import { delay } from '../../utils'
+import { initDB, dbClient } from './shared'
 
 const postsCollectionName = 'posts'
 const usersCollectionName = 'users'

@@ -1,6 +1,6 @@
 import { FIELD_TYPES } from './types'
-import { metadataStorage, BaseModel } from './model'
 import { ValidationError } from '../error'
+import { metadataStorage } from './shared'
 
 export const BASE_SYMBOL = Symbol('base_model')
 

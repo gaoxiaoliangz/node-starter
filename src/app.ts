@@ -7,7 +7,7 @@ import { NotFoundError } from './lib/error'
 import { connectDB } from './middlewares/connect'
 import { setupAPI } from './web/api'
 import { API_BASE_PATH } from './constants'
-import { initDB } from './lib/db/db'
+import { initDB } from './lib/db'
 
 const app = express()
 
