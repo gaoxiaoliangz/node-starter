@@ -43,24 +43,24 @@ export class Field {
   validate(value: any) {
     if (value === null || value === undefined) {
       if (!this.config.nullable) {
-        throw new ValidationError(`${this.config.name} is not nullable`)
+        return new ValidationError(`${this.config.name} is not nullable`)
       }
-      return value
+      return
     }
 
     const typeValidator = typeValidatorMap[this.config.type]
     if (!typeValidator) {
-      throw new RuntimeError(`type ${this.config.type} is not supported`)
+      return new RuntimeError(`type ${this.config.type} is not supported`)
     }
 
     if (!typeValidator(value)) {
-      throw new ValidationError(
+      return new ValidationError(
         `${this.config.name} is not of type ${FieldTypes[this.config.type]}`,
       )
     }
 
     if (this.config.validate) {
-      this.config.validate(value)
+      return this.config.validate(value)
     }
   }
 }

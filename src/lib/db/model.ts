@@ -1,7 +1,7 @@
 import { ObjectType, FieldTypes } from './types'
 import { Collection, Cursor } from 'mongodb'
 import { field, model } from './decorators'
-import { ValidationError } from '../error'
+import { ValidationError, DefinedError } from '../error'
 import { dbClient, metadataStorage } from './shared'
 
 export const BASE_SYMBOL = Symbol('base_model')
@@ -27,11 +27,6 @@ export class BaseModel {
     return new CursorContainer<T>(cursor)
   }
 
-  // TODO
-  private static validate<T extends BaseModel>(this: ObjectType<T>, data?: any): Promise<T> {
-    return Promise.resolve(data)
-  }
-
   static async insertOne<T extends BaseModel>(this: ObjectType<T>, data: Partial<T>): Promise<T> {
     const self: any = this
     return self.from(data).save()
@@ -39,26 +34,30 @@ export class BaseModel {
 
   static from<T extends BaseModel>(this: ObjectType<T>, data: Partial<T>): T {
     const self: any = this
-    const { fields, name } = metadataStorage.getMetadataByClass(self)
-    const finalData = {
-      createdAt: new Date(),
-    }
-
-    for (let key of Object.keys(data)) {
-      const field = fields[key]
-      if (field) {
-        field.validate(data[key])
-        finalData[key] = data[key]
-      } else {
-        throw new ValidationError(`${key} not permitted in ${name}`)
-      }
-    }
-    return new self(finalData)
+    return new self(data)
   }
 
-  constructor(data) {
-    // TODO: TypeORM 是怎么做的？
-    Object.assign(this, data)
+  constructor(data?) {
+    if (data) {
+      const { fields, name } = metadataStorage.getMetadataByInstance(this)
+      const finalData = {
+        createdAt: new Date(),
+      }
+
+      for (let key of Object.keys(data)) {
+        const field = fields[key]
+        if (field) {
+          const error = field.validate(data[key])
+          if (error) {
+            throw error
+          }
+          finalData[key] = data[key]
+        } else {
+          throw new ValidationError(`${key} not permitted in ${name}`)
+        }
+      }
+      Object.assign(this, finalData)
+    }
   }
 
   @field({
@@ -73,12 +72,18 @@ export class BaseModel {
   })
   updatedAt: Date
 
-  // TODO: should not be async
-  async validate() {
+  validate(): (Error | DefinedError)[] {
     const { fields } = metadataStorage.getMetadataByInstance(this)
+    const errors = []
     for (let key of Object.keys(fields)) {
       const field = fields[key]
-      field.validate(this[key])
+      const error = field.validate(this[key])
+      if (error) {
+        errors.push(error)
+      }
+    }
+    if (errors.length) {
+      return errors
     }
   }
 
@@ -93,7 +98,10 @@ export class BaseModel {
 
   async save() {
     const { name } = metadataStorage.getMetadataByInstance(this)
-    await this.validate()
+    const errors = this.validate()
+    if (errors) {
+      return Promise.reject(errors[0])
+    }
     await dbClient.db.collection(name as string).insertOne(this.toDoc())
     return this
   }

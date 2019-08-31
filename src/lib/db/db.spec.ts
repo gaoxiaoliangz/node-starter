@@ -82,6 +82,14 @@ beforeAll(async () => {
   await clearDb()
 })
 
+describe('model class', () => {
+  test('calling validate should not throw', () => {
+    const post = new PostModel()
+    const errors = post.validate()
+    expect(errors.length).toBe(2)
+  })
+})
+
 describe('model CRUD', () => {
   test('insertOne & find', async () => {
     await dropColl(postsCollectionName)

@@ -1,3 +1,5 @@
+import { DefinedError } from '../error'
+
 export type ObjectType<T> = { new (): T } | Function
 
 export enum FieldTypes {
@@ -15,5 +17,5 @@ export interface FieldConfig {
   name?: string
   nullable?: boolean
   type?: FieldTypes
-  validate?: (value: any) => void
+  validate?: (value: any) => void | Error | DefinedError
 }
