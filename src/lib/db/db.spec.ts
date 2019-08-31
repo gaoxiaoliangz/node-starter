@@ -5,7 +5,7 @@ process.env.SECRET = '0eiu09802i3uu980'
 import _ from 'lodash'
 import { BaseModel } from './model'
 import { field, model } from './decorators'
-import { FIELD_TYPES } from './types'
+import { FieldTypes } from './types'
 import { delay } from '../../utils'
 import { initDB, dbClient } from './shared'
 
@@ -20,12 +20,12 @@ initDB({
 @model(postsCollectionName)
 class PostModel extends BaseModel {
   @field({
-    type: FIELD_TYPES.STRING,
+    type: FieldTypes.String,
   })
   title: string
 
   @field({
-    type: FIELD_TYPES.STRING,
+    type: FieldTypes.String,
     validate: val => {
       if (!['published', 'draft'].includes(val)) {
         throw new Error(`status is not valid`)
@@ -38,7 +38,7 @@ class PostModel extends BaseModel {
 @model(usersCollectionName)
 class UserModel extends BaseModel {
   @field({
-    type: FIELD_TYPES.STRING,
+    type: FieldTypes.String,
   })
   username: string
 }

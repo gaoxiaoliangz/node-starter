@@ -1,5 +1,5 @@
-import { DBConfig } from './db-config'
-import { DBClient } from './db-client'
+import { DBConfig } from './config'
+import { DBClient } from './client'
 import { MetadataStorage } from './metadata-storage'
 
 const dbConfig = new DBConfig()

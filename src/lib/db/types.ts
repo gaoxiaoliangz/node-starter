@@ -1,13 +1,19 @@
 export type ObjectType<T> = { new (): T } | Function
 
-export const enum FIELD_TYPES {
-  STRING,
-  NUMBER,
-  OBJECT,
-  ARRAY,
+export const enum FieldTypes {
+  String,
+  Number,
+  Object,
+  Array,
   JSON,
-  BOOLEAN,
-  NULL,
+  Boolean,
   ID,
-  DATE,
+  Date,
+}
+
+export interface FieldConfig {
+  name?: string
+  nullable?: boolean
+  type?: FieldTypes
+  validate?: (value: any) => void
 }

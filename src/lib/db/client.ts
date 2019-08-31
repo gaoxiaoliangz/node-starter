@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb'
-import { DBConfig } from './db-config'
+import { DBConfig } from './config'
 import { connectDB } from './helpers'
 import { BaseModel } from './model'
 import { ObjectType } from './types'

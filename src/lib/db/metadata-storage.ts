@@ -1,5 +1,5 @@
-import { BASE_SYMBOL, Field } from './decorators'
-import { BaseModel } from './model'
+import { BaseModel, BASE_SYMBOL } from './model'
+import { Field } from './field'
 
 interface ModelMetadata {
   name?: string | Symbol

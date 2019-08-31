@@ -1,8 +1,10 @@
-import { ObjectType, FIELD_TYPES } from './types'
+import { ObjectType, FieldTypes } from './types'
 import { Collection, Cursor } from 'mongodb'
-import { field, model, BASE_SYMBOL } from './decorators'
+import { field, model } from './decorators'
 import { ValidationError } from '../error'
 import { dbClient, metadataStorage } from './shared'
+
+export const BASE_SYMBOL = Symbol('base_model')
 
 export class CursorContainer<T> {
   constructor(public cursor: Cursor<T>) {}
@@ -60,12 +62,12 @@ export class BaseModel {
   }
 
   @field({
-    type: FIELD_TYPES.DATE,
+    type: FieldTypes.Date,
   })
   createdAt: Date
 
   @field({
-    type: FIELD_TYPES.DATE,
+    type: FieldTypes.Date,
     nullable: true,
   })
   updatedAt: Date

@@ -1,38 +1,12 @@
-import { FIELD_TYPES } from './types'
-import { ValidationError } from '../error'
+import { FieldTypes, FieldConfig } from './types'
 import { metadataStorage } from './shared'
+import { Field } from './field'
 
-export const BASE_SYMBOL = Symbol('base_model')
-
-// TODO: should not be here
-export class Field {
-  constructor(public config: FieldConfig) {}
-
-  validate(value: any) {
-    if (value === null || value === undefined) {
-      if (!this.config.nullable) {
-        throw new ValidationError(`${this.config.name} is not nullable`)
-      }
-      return value
-    }
-    if (this.config.validate) {
-      this.config.validate(value)
-    }
-  }
-}
-
-// decorators
-export interface FieldConfig {
-  name?: string
-  nullable?: boolean
-  type?: FIELD_TYPES
-  validate?: (value: any) => void
-}
 export const field = (config: FieldConfig = {}) => (target, prop) => {
   const finalConfig = {
     name: prop,
     nullable: false,
-    type: FIELD_TYPES.STRING,
+    type: FieldTypes.String,
     ...config,
   }
 
