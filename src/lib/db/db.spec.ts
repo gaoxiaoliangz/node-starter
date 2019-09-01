@@ -110,6 +110,28 @@ describe('model CRUD', () => {
     await dropColl(postsCollectionName)
   })
 
+  test('list', async () => {
+    await dropColl(postsCollectionName)
+    await Promise.all(
+      _.times(20).map(n => {
+        return PostModel.insertOne({
+          title: `name_${n}`,
+          status: 'published',
+        })
+      }),
+    )
+    // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
+    await delay(100)
+    const result = await PostModel.list(
+      {},
+      {
+        limit: 999,
+      },
+    )
+    expect(result.total).toBe(20)
+    await dropColl(postsCollectionName)
+  })
+
   test('find toArray', async () => {
     await dropColl(postsCollectionName)
     await Promise.all(

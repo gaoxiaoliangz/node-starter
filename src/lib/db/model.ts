@@ -1,4 +1,4 @@
-import { ObjectType, FieldTypes } from './types'
+import { ObjectType, FieldTypes, PaginationConfig, Pagination } from './types'
 import { Collection, Cursor, ObjectID } from 'mongodb'
 import { field, model } from './decorators'
 import { DefinedError } from '../error'
@@ -10,10 +10,9 @@ export const BASE_SYMBOL = Symbol('base_model')
 export class CursorContainer<T> {
   constructor(public cursor: Cursor<T>, private modelClass: T) {}
 
-  toArray() {
-    return this.cursor.toArray().then(list => {
-      return list.map(data => (this.modelClass as any).from(data))
-    })
+  async toArray(): Promise<T[]> {
+    const list = await this.cursor.toArray()
+    return list.map(data => (this.modelClass as any).from(data))
   }
 }
 
@@ -53,7 +52,7 @@ class ModelAdapter {
       ...rawData,
     }
 
-    // validation
+    // validation & field value transformation
     for (let key of Object.keys(fields)) {
       const field = fields[key]
       let value = data[key]
@@ -131,6 +130,21 @@ export class BaseModel {
       return Model.from(data)
     }
     return null
+  }
+
+  static async list<T extends BaseModel>(
+    this: ObjectType<T>,
+    query = {},
+    patination: PaginationConfig,
+  ): Promise<Pagination<T>> {
+    const Model: any = this
+    const { fields } = metadataStorage.getMetadataByClass(Model)
+    const cursor = Model.getCollection(Model).find(transformQuery(query, fields))
+    const items = await new CursorContainer<T>(cursor, Model as any).toArray()
+    // TODO
+    return {
+      items,
+    } as any
   }
 
   static async insertOne<T extends BaseModel>(this: ObjectType<T>, data: Partial<T>): Promise<T> {
