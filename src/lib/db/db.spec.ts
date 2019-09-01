@@ -167,6 +167,23 @@ describe('model CRUD', () => {
     })
     expect(match2).toBe(null)
   })
+
+  test('update', async () => {
+    const post = await PostModel.insertOne({
+      title: 'abc',
+    })
+    const match = await PostModel.findOne({
+      id: post.id,
+    })
+    expect(match.title).toBe('abc')
+
+    post.title = 'bcd'
+    await post.save()
+    const match2 = await PostModel.findOne({
+      id: post.id,
+    })
+    expect(match2.title).toBe('bcd')
+  })
 })
 
 describe('model field validation', () => {
@@ -215,8 +232,6 @@ describe('model field validation', () => {
 
 /**
  * TODOs
- * - remove doc
- * - update doc
  * - find doc & toArray
  * - list doc with pagination
  * - type: insertOne should not use Partial
@@ -224,6 +239,6 @@ describe('model field validation', () => {
 
 afterAll(async () => {
   await delay(100)
-  // await clearDb()
+  await clearDb()
   await dbClient.current.close()
 })

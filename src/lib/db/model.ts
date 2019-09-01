@@ -191,12 +191,29 @@ export class BaseModel {
 
   async save() {
     const { name } = metadataStorage.getMetadataByInstance(this)
+    const collection = dbClient.db.collection(name as string)
     const errors = this.validate()
     if (errors) {
       return Promise.reject(errors[0])
     }
-    // TODO: check existence
-    const result = await dbClient.db.collection(name as string).insertOne(this.toDoc())
+    const match = await collection.findOne({
+      _id: this.id,
+    })
+    if (match) {
+      await collection.updateOne(
+        {
+          _id: this.id,
+        },
+        {
+          $set: {
+            ...this.toDoc(),
+            updatedAt: new Date(),
+          },
+        },
+      )
+      return this
+    }
+    await collection.insertOne(this.toDoc())
     return this
   }
 
