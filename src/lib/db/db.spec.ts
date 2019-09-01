@@ -152,16 +152,21 @@ describe('model CRUD', () => {
     })
   })
 
-  // test('remove', async () => {
-  //   const post = await PostModel.insertOne({
-  //     title: 'abc',
-  //   })
-  //   const match = await PostModel.find({
-  //     _id: post._id,
-  //   })
-  //   await post.remove()
-  //   // expect()
-  // })
+  test('remove', async () => {
+    const post = await PostModel.insertOne({
+      title: 'abc',
+    })
+    const match = await PostModel.findOne({
+      id: post.id,
+    })
+    expect(match).not.toBe(null)
+    await post.remove()
+
+    const match2 = await PostModel.findOne({
+      id: post.id,
+    })
+    expect(match2).toBe(null)
+  })
 })
 
 describe('model field validation', () => {
@@ -212,10 +217,9 @@ describe('model field validation', () => {
  * TODOs
  * - remove doc
  * - update doc
- * - find doc
  * - find doc & toArray
  * - list doc with pagination
- * - insertOne should not use Partial
+ * - type: insertOne should not use Partial
  */
 
 afterAll(async () => {

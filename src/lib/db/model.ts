@@ -195,9 +195,16 @@ export class BaseModel {
     if (errors) {
       return Promise.reject(errors[0])
     }
+    // TODO: check existence
     const result = await dbClient.db.collection(name as string).insertOne(this.toDoc())
     return this
   }
 
-  remove() {}
+  remove() {
+    const { name } = metadataStorage.getMetadataByInstance(this)
+    const collection = dbClient.db.collection(name as string)
+    return collection.deleteOne({
+      _id: this.id,
+    })
+  }
 }
