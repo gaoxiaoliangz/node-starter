@@ -2,6 +2,7 @@
 process.env.DEBUG = 'myapp:*'
 process.env.SECRET = '0eiu09802i3uu980'
 
+import { ObjectID } from 'mongodb'
 import _ from 'lodash'
 import { BaseModel } from './model'
 import { field, model } from './decorators'
@@ -86,7 +87,8 @@ describe('model class', () => {
   test('calling validate should not throw', () => {
     const post = new PostModel()
     const errors = post.validate()
-    expect(errors.length).toBe(2)
+    expect(errors.length).toBe(1)
+    expect(errors[0].message).toBe('title is not nullable')
   })
 })
 
@@ -108,7 +110,30 @@ describe('model CRUD', () => {
     await dropColl(postsCollectionName)
   })
 
-  test('insertOne test field custom validator using ', async () => {
+  test('insertOne return', async () => {
+    const id = new ObjectID()
+    const post = await PostModel.insertOne({
+      title: 'ok233',
+      id,
+    })
+    expect(Object.keys(post)).toEqual([
+      'createdAt',
+      'id',
+      'title',
+      'updatedAt',
+      'count',
+      'publishedAt',
+      'authorId',
+      'status',
+    ])
+    const model = await PostModel.findOne({
+      _id: id,
+    })
+    expect(model.id.toString()).toBe(id.toHexString())
+    expect(model.title).toBe('ok233')
+  })
+
+  test('insertOne with invalid data', async () => {
     expect.assertions(1)
     await PostModel.insertOne({
       title: 'test1',
@@ -117,6 +142,18 @@ describe('model CRUD', () => {
       expect(error.message).toBe('status is not valid')
     })
   })
+
+  // test('remove', async () => {
+  //   const post = await PostModel.insertOne({
+  //     title: 'abc',
+  //   })
+  //   console.log(post)
+  //   PostModel.find({
+  //     _id: post._id,
+  //   })
+  //   await post.remove()
+  //   // expect()
+  // })
 })
 
 describe('model field validation', () => {
@@ -163,8 +200,18 @@ describe('model field validation', () => {
   })
 })
 
+/**
+ * TODOs
+ * - remove doc
+ * - update doc
+ * - find doc
+ * - find doc & toArray
+ * - list doc with pagination
+ * - insertOne should not use Partial
+ */
+
 afterAll(async () => {
   await delay(100)
-  await clearDb()
+  // await clearDb()
   await dbClient.current.close()
 })
