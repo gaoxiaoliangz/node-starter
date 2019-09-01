@@ -110,7 +110,7 @@ describe('model CRUD', () => {
     await dropColl(postsCollectionName)
   })
 
-  test('insertOne return', async () => {
+  test('insertOne: id _id fields', async () => {
     const id = new ObjectID()
     const post = await PostModel.insertOne({
       title: 'ok233',
@@ -127,10 +127,19 @@ describe('model CRUD', () => {
       'status',
     ])
     const model = await PostModel.findOne({
-      _id: id,
+      _id: id.toHexString(),
     })
+    const model2 = await PostModel.findOne({
+      id: id.toHexString(),
+    })
+    const model3 = await PostModel.findOne({
+      id,
+    })
+
     expect(model.id.toString()).toBe(id.toHexString())
     expect(model.title).toBe('ok233')
+    expect(model2.title).toBe('ok233')
+    expect(model3.title).toBe('ok233')
   })
 
   test('insertOne with invalid data', async () => {
@@ -147,8 +156,7 @@ describe('model CRUD', () => {
   //   const post = await PostModel.insertOne({
   //     title: 'abc',
   //   })
-  //   console.log(post)
-  //   PostModel.find({
+  //   const match = await PostModel.find({
   //     _id: post._id,
   //   })
   //   await post.remove()

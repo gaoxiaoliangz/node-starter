@@ -1,7 +1,7 @@
 import { ObjectType, FieldTypes } from './types'
 import { Collection, Cursor, ObjectID } from 'mongodb'
 import { field, model } from './decorators'
-import { ValidationError, DefinedError } from '../error'
+import { DefinedError } from '../error'
 import { dbClient, metadataStorage } from './shared'
 import { Field } from './field'
 
@@ -77,6 +77,32 @@ class ModelAdapter {
   }
 }
 
+// any id fields can use ObjectId or the string version of ObjectId
+// id will be transformed to _id
+const transformQuery = (
+  query: object,
+  fields: {
+    [key: string]: Field
+  },
+) => {
+  const finalQuery = {}
+  for (let queryKey of Object.keys(query)) {
+    let value = query[queryKey]
+    let fieldKey = queryKey
+    if (queryKey === 'id') {
+      queryKey = '_id'
+    }
+    if (queryKey === '_id') {
+      fieldKey = 'id'
+    }
+    if (fields[fieldKey].config.type === FieldTypes.ID && value) {
+      value = new ObjectID(value)
+    }
+    finalQuery[queryKey] = value
+  }
+  return finalQuery
+}
+
 @model(BASE_SYMBOL)
 export class BaseModel {
   static collection: string
@@ -85,17 +111,19 @@ export class BaseModel {
     return dbClient.getCollectionByClass(this)
   }
 
-  static find<T extends BaseModel>(this: ObjectType<T>, query?): CursorContainer<T> {
+  static find<T extends BaseModel>(this: ObjectType<T>, query = {}): CursorContainer<T> {
     const Model: any = this
-    const cursor = Model.getCollection(this).find(query)
-    return new CursorContainer<T>(cursor, this as any)
+    const { fields } = metadataStorage.getMetadataByClass(Model)
+    const cursor = Model.getCollection(Model).find(transformQuery(query, fields))
+    return new CursorContainer<T>(cursor, Model as any)
   }
 
   // _id, id key, id 的值是 ObjectId 实例还是 字符串，这些问题 mongodb 默认已经做了处理
   // TODO: 其他字段如果是 id 呢？
-  static async findOne<T extends BaseModel>(this: ObjectType<T>, query?): Promise<T> {
+  static async findOne<T extends BaseModel>(this: ObjectType<T>, query = {}): Promise<T> {
     const Model: any = this
-    const data = await Model.getCollection(this).findOne(query)
+    const { fields } = metadataStorage.getMetadataByClass(Model)
+    const data = await Model.getCollection(Model).findOne(transformQuery(query, fields))
     if (data) {
       return Model.from(data)
     }
