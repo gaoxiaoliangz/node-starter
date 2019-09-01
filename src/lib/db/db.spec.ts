@@ -110,6 +110,25 @@ describe('model CRUD', () => {
     await dropColl(postsCollectionName)
   })
 
+  test('find toArray', async () => {
+    await dropColl(postsCollectionName)
+    await Promise.all(
+      _.times(3).map(n => {
+        return PostModel.insertOne({
+          title: `to_array_test`,
+          status: 'published',
+        })
+      }),
+    )
+    // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
+    await delay(100)
+    const list = await PostModel.find().toArray()
+    expect(list.length).toBe(3)
+    expect(list[0].title).toBe('to_array_test')
+    expect(ObjectID.isValid(list[0].id)).toBe(true)
+    await dropColl(postsCollectionName)
+  })
+
   test('insertOne: id _id fields', async () => {
     const id = new ObjectID()
     const post = await PostModel.insertOne({
@@ -232,7 +251,6 @@ describe('model field validation', () => {
 
 /**
  * TODOs
- * - find doc & toArray
  * - list doc with pagination
  * - type: insertOne should not use Partial
  */

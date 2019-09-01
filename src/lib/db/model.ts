@@ -10,8 +10,11 @@ export const BASE_SYMBOL = Symbol('base_model')
 export class CursorContainer<T> {
   constructor(public cursor: Cursor<T>, private modelClass: T) {}
 
-  // TODO: impl
-  toArray() {}
+  toArray() {
+    return this.cursor.toArray().then(list => {
+      return list.map(data => (this.modelClass as any).from(data))
+    })
+  }
 }
 
 class ModelAdapter {
