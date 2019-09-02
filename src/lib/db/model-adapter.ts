@@ -45,6 +45,7 @@ export class ModelAdapter {
       if (field.config.name === 'id') {
         // _id id 同时存在时，优先使用 _id
         value = data._id || data.id
+        delete data._id
       }
       if (value !== null && value !== undefined) {
         const error = field.validate(value)
