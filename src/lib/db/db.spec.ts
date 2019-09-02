@@ -29,17 +29,17 @@ class PostModel extends BaseModel {
   @field({
     type: FieldTypes.Number,
   })
-  count: number
+  count?: number
 
   @field({
     type: FieldTypes.Date,
   })
-  publishedAt: Date
+  publishedAt?: Date
 
   @field({
     type: FieldTypes.ID,
   })
-  authorId: string
+  authorId?: string
 
   @field({
     type: FieldTypes.String,
@@ -49,7 +49,23 @@ class PostModel extends BaseModel {
       }
     },
   })
-  status: string
+  status?: string
+}
+
+const typeTest = () => {
+  PostModel.insertOne({
+    title: 'title',
+    id: 'abc',
+    publishedAt: new Date(1),
+  })
+
+  PostModel.find({
+    title: {
+      $eq: '1',
+    },
+    _id: 1,
+    abc: 1,
+  })
 }
 
 @model(usersCollectionName)
@@ -298,11 +314,6 @@ describe('model field validation', () => {
     }).toThrow('publishedAt is not of type Date')
   })
 })
-
-/**
- * TODOs
- * - type: insertOne should not use Partial
- */
 
 afterAll(async () => {
   await delay(100)

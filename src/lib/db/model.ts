@@ -1,5 +1,5 @@
 import { ObjectType, FieldTypes, PaginationConfig, Pagination } from './types'
-import { Collection, Cursor, ObjectID } from 'mongodb'
+import { Collection, Cursor, ObjectID, FilterQuery } from 'mongodb'
 import { field, model } from './decorators'
 import { DefinedError } from '../error'
 import { dbClient, metadataStorage } from './shared'
@@ -51,7 +51,10 @@ export class BaseModel {
     return dbClient.getCollectionByClass(this)
   }
 
-  static find<T extends BaseModel>(this: ObjectType<T>, query = {}): CursorContainer<T> {
+  static find<T extends BaseModel>(
+    this: ObjectType<T>,
+    query: FilterQuery<T> = {},
+  ): CursorContainer<T> {
     const Model: any = this
     const { fields } = metadataStorage.getMetadataByClass(Model)
     const cursor = Model.getCollection(Model).find(transformQuery(query, fields))
@@ -60,7 +63,10 @@ export class BaseModel {
 
   // _id, id key, id 的值是 ObjectId 实例还是 字符串，这些问题 mongodb 默认已经做了处理
   // TODO: 其他字段如果是 id 呢？
-  static async findOne<T extends BaseModel>(this: ObjectType<T>, query = {}): Promise<T> {
+  static async findOne<T extends BaseModel>(
+    this: ObjectType<T>,
+    query: FilterQuery<T> = {},
+  ): Promise<T> {
     const Model: any = this
     const { fields } = metadataStorage.getMetadataByClass(Model)
     const data = await Model.getCollection(Model).findOne(transformQuery(query, fields))
@@ -72,7 +78,7 @@ export class BaseModel {
 
   static async list<T extends BaseModel>(
     this: ObjectType<T>,
-    query = {},
+    query: FilterQuery<T> = {},
     patination: PaginationConfig,
   ): Promise<Pagination<T>> {
     const defaultPagination: PaginationConfig = {
@@ -147,7 +153,7 @@ export class BaseModel {
     type: FieldTypes.Date,
     nullable: true,
   })
-  updatedAt: Date
+  updatedAt?: Date
 
   validate(): (Error | DefinedError)[] {
     const { fields } = metadataStorage.getMetadataByInstance(this)
