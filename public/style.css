@@ -1,8 +1,19 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+  color: #00b7ff;
+}
+
+.page-home h1 {
+  margin: 0;
+  font-weight: normal;
+  font-size: 22px;
+}
+
+.page-home .container {
+  padding: 30px;
 }
