@@ -4,25 +4,15 @@ A simple express-based node starter
 
 ## Features
 
-- eslint
 - ejs
 - express
 - multer
-- VS Code launch config
+- a simple mongodb wrapper
 
 ## How to run
 
-install nodemon on the global, then
-
 ```
 yarn install
-yarn start
+yarn watch
+yarn dev
 ```
-
-## TODOs
-
-- [ ] fix todos
-- [ ] fix any
-- [ ] support pagination
-- [ ] createModel with field types
-- [ ] support now
