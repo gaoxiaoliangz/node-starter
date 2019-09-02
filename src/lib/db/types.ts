@@ -23,16 +23,13 @@ export interface FieldConfig {
 
 export interface PaginationConfig {
   limit?: number
-  total?: number
-  start?: number | string | ObjectID
-  cursorBased?: boolean
+  next?: number | string | ObjectID
 }
 
 export interface Pagination<T> {
   items: T[]
-  start: number | string | ObjectID
   next: number | string | ObjectID
-  cursorBased: boolean
+  hasNext: boolean
   limit: number
   total: number
 }

@@ -112,23 +112,51 @@ describe('model CRUD', () => {
 
   test('list', async () => {
     await dropColl(postsCollectionName)
-    await Promise.all(
-      _.times(20).map(n => {
-        return PostModel.insertOne({
-          title: `name_${n}`,
-          status: 'published',
-        })
-      }),
-    )
-    // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
-    await delay(100)
+    await PostModel.insertOne({
+      title: 'title1',
+    })
+    await PostModel.insertOne({
+      title: 'title2',
+    })
+    const post3 = await PostModel.insertOne({
+      title: 'title3',
+    })
     const result = await PostModel.list(
       {},
       {
         limit: 999,
       },
     )
-    expect(result.total).toBe(20)
+    expect(result.total).toBe(3)
+    expect(result.hasNext).toBe(false)
+    expect(result.next).toBe(1)
+    expect(result.items[0].id.toString()).toBe(post3.id.toString())
+    await dropColl(postsCollectionName)
+  })
+
+  test('list hasNext', async () => {
+    await dropColl(postsCollectionName)
+    await PostModel.insertOne({
+      title: 'title1',
+    })
+    await PostModel.insertOne({
+      title: 'title2',
+    })
+    await PostModel.insertOne({
+      title: 'title3',
+    })
+
+    // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
+    await delay(100)
+    const result = await PostModel.list(
+      {},
+      {
+        limit: 2,
+      },
+    )
+    expect(result.total).toBe(3)
+    expect(result.hasNext).toBe(true)
+    expect(result.next).toBe(1)
     await dropColl(postsCollectionName)
   })
 
@@ -273,7 +301,6 @@ describe('model field validation', () => {
 
 /**
  * TODOs
- * - list doc with pagination
  * - type: insertOne should not use Partial
  */
 

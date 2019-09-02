@@ -4,6 +4,7 @@ import { field, model } from './decorators'
 import { DefinedError } from '../error'
 import { dbClient, metadataStorage } from './shared'
 import { Field } from './field'
+import { ModelAdapter } from './model-adapter'
 
 export const BASE_SYMBOL = Symbol('base_model')
 
@@ -13,69 +14,6 @@ export class CursorContainer<T> {
   async toArray(): Promise<T[]> {
     const list = await this.cursor.toArray()
     return list.map(data => (this.modelClass as any).from(data))
-  }
-}
-
-class ModelAdapter {
-  constructor(
-    public fields: {
-      [key: string]: Field
-    },
-  ) {}
-
-  toMongodbDoc(model) {
-    const doc = {}
-    const { fields } = this
-    for (let key of Object.keys(fields)) {
-      const field = fields[key]
-      let value = model[key]
-      if (field.config.type === FieldTypes.ID && value) {
-        // TODO: put it in Field
-        value = new ObjectID(value)
-        if (field.config.name === 'id') {
-          key = '_id'
-        }
-      }
-      doc[key] = value
-    }
-    return doc
-  }
-
-  // 从外界来的数据，可能直接来自 mongodb doc，或者用户输入
-  from(rawData) {
-    const { fields } = this
-    const id = new ObjectID()
-    const data = {
-      // default values
-      createdAt: new Date(),
-      id,
-      ...rawData,
-    }
-
-    // validation & field value transformation
-    for (let key of Object.keys(fields)) {
-      const field = fields[key]
-      let value = data[key]
-      if (field.config.name === 'id') {
-        // _id id 同时存在时，优先使用 _id
-        value = data._id || data.id
-      }
-      if (value !== null && value !== undefined) {
-        const error = field.validate(value)
-        if (error) {
-          throw error
-        }
-        if (field.config.type === FieldTypes.ID) {
-          value = new ObjectID(value)
-        }
-      } else {
-        value = null
-      }
-      data[key] = value
-      // 未定义的 field 会被忽略
-      // throw new ValidationError(`${key} not permitted in ${name}`)
-    }
-    return data
   }
 }
 
@@ -137,14 +75,38 @@ export class BaseModel {
     query = {},
     patination: PaginationConfig,
   ): Promise<Pagination<T>> {
+    const defaultPagination: PaginationConfig = {
+      next: 0,
+      limit: 10,
+    }
+    const paginationConfig = {
+      ...defaultPagination,
+      ...patination,
+    }
     const Model: any = this
     const { fields } = metadataStorage.getMetadataByClass(Model)
-    const cursor = Model.getCollection(Model).find(transformQuery(query, fields))
+    const { limit, next } = paginationConfig
+    const collection = Model.getCollection(Model) as Collection
+    const skip = <number>next * limit
+    const total = await collection.count()
+    const cursor = collection
+      .find(transformQuery(query, fields))
+      .skip(skip)
+      .limit(limit)
+      .sort({
+        _id: -1,
+      })
     const items = await new CursorContainer<T>(cursor, Model as any).toArray()
-    // TODO
+    const nextPage = <number>next + 1
+    const hasNext = (skip + 1) * limit < total
+
     return {
       items,
-    } as any
+      total,
+      limit,
+      next: nextPage,
+      hasNext,
+    }
   }
 
   static async insertOne<T extends BaseModel>(this: ObjectType<T>, data: Partial<T>): Promise<T> {
