@@ -1,18 +1,19 @@
 {
-  "name": "nodejs-rest-starter",
-  "version": "0.2.0",
+  "name": "node-starter",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
+    "watch": "yarn build --watch",
     "dev": "nodemon",
     "dev:ts-node": "nodemon --config nodemon.ts-node.json",
-    "start": "node dist/main.js",
-    "prebuild": "rm -rf dist",
-    "build": "tsc -p tsconfig.build.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:debug:win": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ./node_modules/jest/bin/jest.js --runInBand",
+    "test:cov": "jest --coverage",
+    "prebuild": "rm -rf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "serve:prod": "NODE_ENV=production node -r dotenv/config dist/main.js",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
@@ -20,7 +21,12 @@
     "dotenv": "^8.1.0",
     "ejs": "~2.6.2",
     "express": "~4.17.1",
+    "express-jwt": "^5.3.1",
     "http-errors": "~1.7.3",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "md5": "^2.2.1",
+    "mongodb": "^3.3.0",
     "morgan": "~1.9.1",
     "multer": "^1.4.2",
     "rimraf": "^3.0.0",
@@ -28,7 +34,13 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.1",
+    "@types/express-jwt": "^0.0.42",
     "@types/jest": "^24.0.17",
+    "@types/jsonwebtoken": "^8.3.3",
+    "@types/lodash": "^4.14.137",
+    "@types/md5": "^2.1.33",
+    "@types/mongodb": "^3.3.1",
+    "@types/morgan": "^1.7.37",
     "@types/node": "^12.7.2",
     "@types/supertest": "^2.0.8",
     "jest": "^24.9.0",
@@ -39,7 +51,7 @@
     "ts-node": "^8.3.0",
     "tsconfig-paths": "^3.8.0"
   },
-  "repository": "git@github.com:gaoxiaoliangz/nodejs-rest-starter.git",
+  "repository": "git@github.com:gaoxiaoliangz/node-starter.git",
   "author": "gaoxiaoliangz <gaoxiaoliangz@gmail.com>",
   "license": "MIT"
 }

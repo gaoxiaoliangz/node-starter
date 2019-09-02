@@ -8,7 +8,7 @@ const site = () => {
   debug('site up')
 
   router.get('/', (req, res) => {
-    res.render('index', {
+    res.render('home', {
       title: 'node starter',
     })
   })

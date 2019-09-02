@@ -1,14 +1,8 @@
-require('dotenv').config()
 import app from './app'
-import debugFactory from 'debug'
-const debug = debugFactory('myapp:server')
 import * as http from 'http'
+import { normalizePort } from './utils'
 
-const onListening = () => {
-  const addr = server.address()
-  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
-  debug('Listening on ' + bind)
-}
+const debug = require('debug')('myapp:main')
 
 const onError = error => {
   if (error.syscall !== 'listen') {
@@ -17,7 +11,6 @@ const onError = error => {
 
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges')
@@ -32,27 +25,14 @@ const onError = error => {
   }
 }
 
-// Normalize a port into a number, string, or false.
-const normalizePort = val => {
-  const port = parseInt(val, 10)
-  if (isNaN(port)) {
-    // named pipe
-    return val
-  }
-  if (port >= 0) {
-    // port number
-    return port
-  }
-  return false
-}
-
 const port = normalizePort(process.env.PORT || '3000')
 const server = http.createServer(app)
 
 app.set('port', port)
 
-//  Listen on provided port, on all network interfaces.
 server.listen(port)
 server.on('error', onError)
-debug(`server running on http://localhost:${port}`)
-server.on('listening', onListening)
+
+server.on('listening', () => {
+  debug(`server running on http://localhost:${port}`)
+})

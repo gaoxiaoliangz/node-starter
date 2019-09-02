@@ -1,38 +1,41 @@
-import createError from 'http-errors'
 import express from 'express'
 import path from 'path'
 import logger from 'morgan'
 import site from './web/site'
-import restAPI from './web/rest-api'
+import { renderError } from './middlewares/error'
+import { NotFoundError } from './lib/error'
+import { connectDB } from './middlewares/connect'
+import { setupAPI } from './web/api'
+import { API_BASE_PATH } from './constants'
+import { initDB } from './lib/db'
 
-const rootApp = express()
+const app = express()
 
-rootApp.use(logger('dev'))
-rootApp.use(express.json())
-rootApp.use(express.urlencoded({ extended: false }))
-rootApp.use(express.static(path.resolve(__dirname, '../public')))
+app.use(logger('dev'))
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(express.static(path.resolve(__dirname, '../public')))
 
-// view engine setup
-rootApp.set('views', path.resolve(__dirname, './views'))
-rootApp.set('view engine', 'ejs')
+app.set('views', path.resolve(__dirname, '../views'))
+app.set('view engine', 'ejs')
 
-rootApp.use('/api', restAPI())
-rootApp.use(site())
+app.use(connectDB())
+app.use(API_BASE_PATH, setupAPI())
+app.use(site())
 
-// catch 404 and forward to error handler
-rootApp.use((req, res, next) => {
-  next(createError(404))
+app.use((req, res, next) => {
+  next(new NotFoundError('Page not found'))
 })
 
-// error handler
-rootApp.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+app.use(
+  renderError({
+    renderPage: true,
+  }),
+)
 
-  // render the error page
-  res.status(err.status || 500)
-  res.render('error')
+initDB({
+  dbName: process.env.DB_NAME,
+  dbURI: process.env.DB_URI,
 })
 
-export default rootApp
+export default app
