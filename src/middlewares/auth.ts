@@ -1,31 +1,27 @@
 import jwt from 'express-jwt'
-import { ObjectID } from 'mongodb'
 import express from 'express'
 import { UnauthorizedError } from '../lib/error'
-import { dbClient } from '../lib/db'
+import { Req } from '../types'
+import { User } from '../models/user'
 
 const SECRET = process.env.SECRET
 
 export const auth = () => {
   const router = express.Router()
 
-  // TODO: 如果 token 过期，这边还是会触发错误，也就是说 login 接口如果附带过期 token 还是会报错
   router.use(jwt({ secret: SECRET, credentialsRequired: false }))
-  router.use(async (req, res, next) => {
-    // @ts-ignore
+  router.use(async (req: Req, res, next) => {
     if (!req.user) {
       return next(new UnauthorizedError())
     }
-    // @ts-ignore
-    const userId = new ObjectID(req.user.sub)
-    const match = await dbClient.db.collection('users').findOne({
-      _id: userId,
+    const match = await User.findOne({
+      id: req.user.sub,
     })
+
     if (!match) {
       return next(new UnauthorizedError())
     }
-    // @ts-ignore
-    req.userId = userId
+    req.userId = req.user.sub
     next()
   })
 
