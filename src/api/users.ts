@@ -5,7 +5,7 @@ import { UnauthorizedError, ValidationError } from '../lib/error'
 import { ROLES } from '../constants'
 import { User } from '../models/user'
 
-const SECRET = process.env.SECRET
+const SECRET = process.env.SECRET || process.env.secret
 
 export const profile = async req => {
   const user = await User.findOne({ id: req.user.sub })

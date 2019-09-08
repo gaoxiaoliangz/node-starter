@@ -4,7 +4,7 @@ import { UnauthorizedError } from '../lib/error'
 import { Req } from '../types'
 import { User } from '../models/user'
 
-const SECRET = process.env.SECRET
+const SECRET = process.env.SECRET || process.env.secret
 
 export const auth = () => {
   const router = express.Router()
