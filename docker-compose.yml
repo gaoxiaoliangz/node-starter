@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  app:
+    # TODO
+    # build: .
+    image: node:10.15.3
+    restart: always
+    environment:
+      - DEBUG=myapp:*
+      - NODE_ENV=production
+      - PORT=3000
+      - SECRET=example-secret
+      # TODO: access host db from docker container
+    ports:
+      # TODO: add ws
+      # - 9999:9999
+      - 8080:3000
+    volumes:
+      - ./:/app
+    networks:
+      # - web_nw
+      - db_nw
+    # command: bash -c "cd /app && yarn && yarn build && yarn serve:prod"
+    command: bash -c "cd /app && yarn serve:prod"
+  mongo:
+    image: mongo:latest # TODO
+    networks:
+      - db_nw
+#   nginx:
+#     image: nginx:alpine
+#     restart: always
+#     ports:
+#       - 8233:80
+#       - 9999:9999
+#     volumes:
+#       - ./configs/nginx.conf:/etc/nginx/nginx.conf
+#       - ./configs/conf.d:/etc/nginx/conf.d
+#       - ./logs/nginx:/var/log/nginx
+#     networks:
+#       - web_nw
+#     depends_on:
+#       - app
+
+networks:
+  # web_nw:
+  #   driver: bridge
+  db_nw:
+    driver: bridge
