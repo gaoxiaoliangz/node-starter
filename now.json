@@ -1,0 +1,19 @@
+{
+  "name": "node-starter",
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/app.ts",
+      "use": "@now/node",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "helpers": false,
+        "includeFiles": ["public/**", "views/**"]
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/src/app.ts" },
+    { "src": "/(.*)", "dest": "/src/app.ts" }
+  ]
+}

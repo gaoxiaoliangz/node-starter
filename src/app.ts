@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path'
 import logger from 'morgan'
+import 'ejs' // zeit-now needs this
 import site from './web/site'
 import { renderError } from './middlewares/error'
 import { NotFoundError } from './lib/error'
