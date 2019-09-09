@@ -4,13 +4,16 @@ A simple express-based node starter
 
 ## Features
 
-- ejs
+- written in TypeScript
+- ejs as template engine
 - express
 - multer
 - a simple mongodb wrapper
 - ready to be deployed to zeit-now
 - ready to be deployed using docker-compose
 - a minimal ws server
+- api e2e tests
+- prettier
 
 ## How to run
 
