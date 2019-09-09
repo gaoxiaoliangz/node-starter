@@ -1,22 +1,15 @@
-// TODO: can it be placed in jest.config?
-process.env.DEBUG = 'myapp:*'
-process.env.SECRET = '0eiu09802i3uu980'
-
+import './prepareEnv'
 import { ObjectID } from 'mongodb'
 import _ from 'lodash'
-import { BaseModel } from './model'
-import { field, model } from './decorators'
-import { FieldTypes } from './types'
-import { delay } from '../../utils'
-import { initDB, dbClient } from './shared'
+import { BaseModel } from '../lib/db/model'
+import './prepareDB' // 如果在 model 之前 import 会有问题
+import { dbClient } from '../lib/db/shared'
+import { field, model } from '../lib/db/decorators'
+import { FieldTypes } from '../lib/db/types'
+import { delay } from '../utils'
 
 const postsCollectionName = 'posts'
 const usersCollectionName = 'users'
-
-initDB({
-  dbName: 'node_starter_test',
-  dbURI: 'mongodb://localhost:27017',
-})
 
 @model(postsCollectionName)
 class PostModel extends BaseModel {
@@ -80,7 +73,6 @@ const dropColl = async collectionName => {
   const coll = dbClient.db.collection(collectionName)
   const result = await coll.find().toArray()
   if (result.length) {
-    console.log('dropped', collectionName)
     return coll.drop()
   }
 }

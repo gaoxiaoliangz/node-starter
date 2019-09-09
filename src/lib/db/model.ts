@@ -94,7 +94,7 @@ export class BaseModel {
     const { limit, next } = paginationConfig
     const collection = Model.getCollection(Model) as Collection
     const skip = <number>next * limit
-    const total = await collection.count()
+    const total = await collection.countDocuments()
     const cursor = collection
       .find(transformQuery(query, fields))
       .skip(skip)
