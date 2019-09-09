@@ -17,7 +17,13 @@ const upload = multer({
 const setupAPIRoutes = () => {
   const router = express.Router()
 
-  router.get('/env', endpoint(() => ({ env: process.env.NODE_ENV, nodeVersion: process.version })))
+  router.get(
+    '/env',
+    endpoint(req => {
+      debug(req.headers)
+      return { env: process.env.NODE_ENV, nodeVersion: process.version }
+    }),
+  )
 
   // users
   router.get('/users', auth(), endpoint(api.users.list))

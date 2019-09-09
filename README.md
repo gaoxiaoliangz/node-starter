@@ -10,6 +10,7 @@ A simple express-based node starter
 - a simple mongodb wrapper
 - ready to be deployed to zeit-now
 - ready to be deployed using docker-compose
+- a minimal ws server
 
 ## How to run
 
@@ -38,7 +39,7 @@ these secrets are referenced in `now.json`
 
 ## deploy using docker-compose
 
-install deps
+install deps & build ts
 
 ```
 docker-compose run app bash -c "cd /app && NODE_ENV=development yarn && NODE_ENV=production yarn build"
