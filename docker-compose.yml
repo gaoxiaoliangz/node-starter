@@ -2,8 +2,6 @@ version: '3'
 
 services:
   app:
-    # TODO
-    # build: .
     image: node:10.15.3
     restart: always
     environment:
@@ -11,7 +9,8 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - SECRET=example-secret
-      # TODO: access host db from docker container
+      - DB_URI=mongodb://mongo:27017
+      - SECRET=secret98765456789
     ports:
       # TODO: add ws
       # - 9999:9999
@@ -21,12 +20,13 @@ services:
     networks:
       # - web_nw
       - db_nw
-    # command: bash -c "cd /app && yarn && yarn build && yarn serve:prod"
     command: bash -c "cd /app && yarn serve:prod"
   mongo:
-    image: mongo:latest # TODO
+    image: mongo:3.6.14
     networks:
       - db_nw
+    volumes:
+      - ./data/db:/data/db
 #   nginx:
 #     image: nginx:alpine
 #     restart: always
