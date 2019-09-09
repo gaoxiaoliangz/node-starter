@@ -2,11 +2,16 @@ import './prepareEnv'
 import { ObjectID } from 'mongodb'
 import _ from 'lodash'
 import { BaseModel } from '../lib/db/model'
-import './prepareDB' // 如果在 model 之前 import 会有问题
-import { dbClient } from '../lib/db/shared'
+import { dbClient, initDB } from '../lib/db/shared'
 import { field, model } from '../lib/db/decorators'
 import { FieldTypes } from '../lib/db/types'
 import { delay } from '../utils'
+import { dropTestDb } from './helpers'
+
+initDB({
+  dbName: process.env.DB_NAME,
+  dbURI: process.env.DB_URI,
+})
 
 const postsCollectionName = 'posts'
 const usersCollectionName = 'users'
@@ -77,10 +82,10 @@ const dropColl = async collectionName => {
   }
 }
 
-const clearDb = async () => {
-  await dropColl(postsCollectionName)
-  await dropColl(usersCollectionName)
-}
+// const clearDb = async () => {
+//   await dropColl(postsCollectionName)
+//   await dropColl(usersCollectionName)
+// }
 
 beforeAll(async () => {
   await dbClient.connect().catch(err => {
@@ -88,7 +93,7 @@ beforeAll(async () => {
     console.log(err)
     return Promise.reject(err)
   })
-  await clearDb()
+  // await clearDb()
 })
 
 describe('model class', () => {
@@ -154,8 +159,8 @@ describe('model CRUD', () => {
       title: 'title3',
     })
 
-    // TODO: 数据库可能有延迟，可这里明明已经 Promise.all 了，说明 insertOne resolve 之后，并没有入库
-    await delay(100)
+    // TODO: afterAll 那边 dropDb 会对这里有影响
+    // await delay(1000)
     const result = await PostModel.list(
       {},
       {
@@ -307,8 +312,9 @@ describe('model field validation', () => {
   })
 })
 
+// TODO
 afterAll(async () => {
   await delay(100)
-  await clearDb()
+  await dropTestDb()
   await dbClient.current.close()
 })
