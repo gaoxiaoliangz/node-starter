@@ -1,3 +1,14 @@
-<h1><%= error.message %></h1>
-<p>Code <%= error.code %></p>
-<pre><%= process.env.NODE_ENV !== 'production' && error.stack %></pre>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= error.message %></title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="page-error">
+    <div class="container">
+      <h1><%= error.message %></h1>
+      <p>Code <%= error.code %></p>
+      <pre><%= process.env.NODE_ENV !== 'production' ? error.stack : '' %></pre>
+    </div>
+  </body>
+</html>
