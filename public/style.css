@@ -14,6 +14,7 @@ a {
   font-size: 22px;
 }
 
-.page-home .container {
+.page-home .container,
+.page-error .container {
   padding: 30px;
 }

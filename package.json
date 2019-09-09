@@ -13,7 +13,10 @@
     "test:cov": "jest --coverage",
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.build.json",
-    "serve:prod": "NODE_ENV=production node -r dotenv/config dist/main.js",
+    "serve:prod": "NODE_ENV=production nodemon -r dotenv/config dist/main.js",
+    "dc": "docker-compose",
+    "up": "yarn dc up",
+    "down": "yarn dc down",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {

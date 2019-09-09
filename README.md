@@ -8,6 +8,8 @@ A simple express-based node starter
 - express
 - multer
 - a simple mongodb wrapper
+- ready to be deployed to zeit-now
+- ready to be deployed using docker-compose
 
 ## How to run
 
@@ -33,3 +35,11 @@ now secret add secret <your-secret-string>
 ```
 
 these secrets are referenced in `now.json`
+
+## deploy using docker-compose
+
+install deps
+
+```
+docker-compose run app bash -c "cd /app && NODE_ENV=development yarn && NODE_ENV=production yarn build"
+```
