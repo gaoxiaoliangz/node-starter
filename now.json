@@ -21,5 +21,8 @@
     "DB_NAME": "node_starter",
     "DB_URI": "@mongodb-url",
     "SECRET": "@secret"
+  },
+  "github": {
+    "silent": true
   }
 }

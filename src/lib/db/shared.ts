@@ -4,7 +4,7 @@ import { MetadataStorage } from './metadata-storage'
 
 const debug = require('debug')('myapp:lib:shared')
 
-const dbConfig = new DBConfig()
+export const dbConfig = new DBConfig()
 
 interface InitDBConfig {
   dbName: string
@@ -18,5 +18,9 @@ export const initDB = (config: InitDBConfig) => {
   debug('dbURI', config.dbURI)
 }
 
-export const dbClient = new DBClient(dbConfig)
+export const createDBClient = () => {
+  return new DBClient(dbConfig)
+}
+
+export const dbClient = createDBClient()
 export const metadataStorage = new MetadataStorage()

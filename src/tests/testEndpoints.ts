@@ -1,15 +1,8 @@
-import './prepareEnv'
 import supertest from 'supertest'
-import app from '../app'
-import { dropTestDb } from './helpers'
-import { dbClient } from '../lib/db'
 
-const request = supertest(app)
-
-describe('api', () => {
+export const testEndpoints = (request: supertest.SuperTest<supertest.Test>) => () => {
   test('/api/env', async () => {
     const res = await request.get('/api/env')
-
     expect(res.status).toBe(200)
     expect(res.header['content-type']).toMatch(/json/)
     expect(res.status).toBe(200)
@@ -59,10 +52,4 @@ describe('api', () => {
       expect(Object.keys(res.body)).toEqual(['createdAt', 'id', 'updatedAt', 'username', 'role'])
     }
   })
-})
-
-// TODO
-// afterAll(async () => {
-//   await dropTestDb()
-//   await dbClient.current.close()
-// })
+}
