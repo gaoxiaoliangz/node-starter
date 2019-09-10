@@ -9,7 +9,7 @@ export const testEndpoints = (request: supertest.SuperTest<supertest.Test>) => (
     expect(Object.keys(res.body)).toEqual(['env', 'nodeVersion'])
   })
 
-  test('signup & login & profile', async () => {
+  test('signup, login flow', async () => {
     const user = {
       username: 'aaa',
       password: 'aaa',
