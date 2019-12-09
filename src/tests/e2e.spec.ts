@@ -1,24 +1,31 @@
 import './prepareEnv'
 import supertest from 'supertest'
-import { dropTestDb } from './helpers'
-import { dbClient } from '../lib/db'
 import { testEndpoints } from './testEndpoints'
-import { testModel } from './testModel'
 import app from '../app'
+import { connect, getClientSync } from 'mongo-fns'
+
+export const dropTestDb = async () => {
+  const client = await connect(process.env.DB_URI)
+  const db = client.db()
+  const dbName = db.databaseName
+  if (/node_starter_test_\d+/.test(dbName)) {
+    return db.dropDatabase()
+  }
+  throw new Error(`db ${dbName} is not a valid test db`)
+}
 
 const request = supertest(app)
 
 beforeAll(async () => {
-  await dbClient.connect()
-  await dropTestDb()
+  await connect(process.env.DB_URI)
 })
 
 describe('e2e', () => {
-  describe('model', testModel)
   describe('endpoints', testEndpoints(request))
 })
 
 afterAll(async () => {
   await dropTestDb()
-  await dbClient.current.close()
+  const client = getClientSync()
+  await client.close()
 })

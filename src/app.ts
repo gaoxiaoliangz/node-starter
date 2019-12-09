@@ -8,7 +8,6 @@ import { NotFoundError } from './lib/error'
 import { connectDB } from './middlewares/connect'
 import { setupAPI } from './web/api'
 import { API_BASE_PATH } from './constants'
-import { initDB } from './lib/db'
 
 const app = express()
 
@@ -33,10 +32,5 @@ app.use(
     renderPage: true,
   }),
 )
-
-initDB({
-  dbName: process.env.DB_NAME,
-  dbURI: process.env.DB_URI,
-})
 
 export default app

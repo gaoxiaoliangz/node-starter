@@ -1,8 +1,7 @@
-import { dbClient } from '../lib/db'
+import { connect } from 'mongo-fns'
 
 export const connectDB = () => (req, res, next) => {
-  dbClient
-    .connect()
+  connect(process.env.DB_URI)
     .then(() => next())
     .catch(next)
 }

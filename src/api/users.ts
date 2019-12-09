@@ -3,12 +3,12 @@ import md5 from 'md5'
 import jsonwebtoken from 'jsonwebtoken'
 import { UnauthorizedError, ValidationError } from '../lib/error'
 import { ROLES } from '../constants'
-import { User } from '../models/user'
+import { userFns } from '../collections/user'
 
 const SECRET = process.env.SECRET
 
 export const profile = async req => {
-  const user = await User.findOne({ id: req.user.sub })
+  const user = await userFns.findOne({ id: req.user.sub })
   if (!user) {
     return new UnauthorizedError()
   }
@@ -16,18 +16,20 @@ export const profile = async req => {
 }
 
 export const list = async req => {
-  return User.list(
-    {},
-    {
-      limit: Number(req.query.limit) || 10,
-      next: Number(req.query.next) || 0,
-    },
-  ).then(result => {
-    return {
-      ...result,
-      items: result.items.map(user => _.omit(user, ['password'])),
-    }
-  })
+  return userFns
+    .list(
+      {},
+      {
+        limit: Number(req.query.limit) || 10,
+        next: Number(req.query.next) || 0,
+      },
+    )
+    .then(result => {
+      return {
+        ...result,
+        items: result.items.map(user => _.omit(user, ['password'])),
+      }
+    })
 }
 
 export const login = async req => {
@@ -35,7 +37,7 @@ export const login = async req => {
   if (!username || !password) {
     return new ValidationError('username & password are required!')
   }
-  const user = await User.findOne({
+  const user = await userFns.findOne({
     username,
     password: md5(password),
   })
@@ -61,11 +63,11 @@ export const login = async req => {
 
 export const signup = async req => {
   const { username, password } = req.body
-  const match = await User.findOne({ username })
+  const match = await userFns.findOne({ username })
   if (match) {
     return new ValidationError('user exists!')
   }
-  const result = await User.insertOne({
+  const result = await userFns.insertOne({
     username,
     password: password && md5(password),
     role: ROLES.USER,

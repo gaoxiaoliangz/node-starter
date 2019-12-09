@@ -1,8 +1,8 @@
 const debug = require('debug')('myapp:api:uploads')
 
-export const upload = object => {
-  debug('file uploaded to', object.path)
+export const upload = req => {
+  debug('file uploaded to', req.file.path)
   return {
-    filePath: object.path,
+    filePath: req.file.path,
   }
 }
