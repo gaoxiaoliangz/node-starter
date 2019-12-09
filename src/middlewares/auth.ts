@@ -2,7 +2,7 @@ import jwt from 'express-jwt'
 import express from 'express'
 import { UnauthorizedError } from '../lib/error'
 import { Req } from '../types'
-import { User } from '../models/user'
+import { userFns } from '../collections/user'
 
 const SECRET = process.env.SECRET
 
@@ -14,8 +14,8 @@ export const auth = () => {
     if (!req.user) {
       return next(new UnauthorizedError())
     }
-    const match = await User.findOne({
-      id: req.user.sub,
+    const match = await userFns.findOne({
+      id: +req.user.sub,
     })
 
     if (!match) {

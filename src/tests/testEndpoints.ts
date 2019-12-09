@@ -29,14 +29,9 @@ export const testEndpoints = (request: supertest.SuperTest<supertest.Test>) => (
     {
       const res = await request.post('/api/login').send(user)
       expect(res.status).toBe(200)
-      expect(Object.keys(res.body)).toEqual([
-        'createdAt',
-        'id',
-        'updatedAt',
-        'username',
-        'role',
-        'token',
-      ])
+      expect(Object.keys(res.body).sort()).toEqual(
+        ['createdAt', 'updatedAt', 'username', 'role', 'token', 'id', '_id', '_raw_id'].sort(),
+      )
       token = res.body.token
     }
 
@@ -49,7 +44,9 @@ export const testEndpoints = (request: supertest.SuperTest<supertest.Test>) => (
     {
       const res = await request.get('/api/profile').set('Authorization', `Bearer ${token}`)
       expect(res.status).toBe(200)
-      expect(Object.keys(res.body)).toEqual(['createdAt', 'id', 'updatedAt', 'username', 'role'])
+      expect(Object.keys(res.body).sort()).toEqual(
+        ['createdAt', 'id', 'updatedAt', 'username', 'role', '_id', '_raw_id'].sort(),
+      )
     }
   })
 }
