@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { DefinedError } from './error'
 
-const isThenable = obj => {
+const isThenable = (obj: any) => {
   try {
     return typeof obj.then === 'function'
   } catch (error) {
@@ -18,16 +18,11 @@ export const endpoint = fn => {
         res.send(result)
       }
     }
+
     try {
       const result = fn(req)
       if (isThenable(result)) {
-        return result
-          .then(data => {
-            handleResult(data)
-          })
-          .catch(err => {
-            next(err)
-          })
+        return result.then(handleResult).catch(next)
       }
       handleResult(result)
     } catch (error) {

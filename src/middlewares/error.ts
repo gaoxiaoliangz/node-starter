@@ -1,20 +1,17 @@
-import { DefinedError, UnauthorizedError, NotFoundError, RuntimeError } from '../lib/error'
+import {
+  DefinedError,
+  UnauthorizedError,
+  NotFoundError,
+  RuntimeError,
+  errorToPlainObject,
+} from '../error'
 
 const debug = require('debug')('myapp:middlewares:apperror')
-const isEnvDevelopment = process.env.NODE_ENV === 'development'
 
 export const renderError = ({ renderPage = false } = {}) => (err, req, res, next) => {
   let statusCode = 500
-  let errorCode
-  let errors
 
   if (err instanceof DefinedError) {
-    errorCode = err.code || 1000
-    errors =
-      (err.errors &&
-        err.errors.length > 1 &&
-        err.errors.map(error => DefinedError.toObject(error))) ||
-      undefined
     if (err instanceof UnauthorizedError) {
       statusCode = 401
     } else if (err instanceof NotFoundError) {
@@ -26,13 +23,7 @@ export const renderError = ({ renderPage = false } = {}) => (err, req, res, next
     }
   }
   debug(err)
-  const errObject = {
-    code: errorCode,
-    message: err.message || 'Unknown error occurred',
-    details: err.details,
-    ...((isEnvDevelopment || statusCode === 500) && { stack: err.stack }),
-    errors,
-  }
+  const errObject = errorToPlainObject(err)
 
   if (renderPage) {
     return res.status(statusCode).render('error', {

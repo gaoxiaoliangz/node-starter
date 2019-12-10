@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import md5 from 'md5'
 import jsonwebtoken from 'jsonwebtoken'
-import { UnauthorizedError, ValidationError } from '../lib/error'
+import { UnauthorizedError, ValidationError } from '../error'
 import { ROLES } from '../constants'
 import { userFns } from '../collections/user'
 
@@ -10,7 +10,7 @@ const SECRET = process.env.SECRET
 export const profile = async req => {
   const user = await userFns.findOne({ id: req.user.sub })
   if (!user) {
-    return new UnauthorizedError()
+    return new UnauthorizedError('Invalid user')
   }
   return _.omit(user, ['password'])
 }

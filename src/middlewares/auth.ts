@@ -1,6 +1,6 @@
 import jwt from 'express-jwt'
 import express from 'express'
-import { UnauthorizedError } from '../lib/error'
+import { UnauthorizedError } from '../error'
 import { Req } from '../types'
 import { userFns } from '../collections/user'
 
@@ -12,14 +12,14 @@ export const auth = () => {
   router.use(jwt({ secret: SECRET, credentialsRequired: false }))
   router.use(async (req: Req, res, next) => {
     if (!req.user) {
-      return next(new UnauthorizedError())
+      return next(new UnauthorizedError('Login required'))
     }
     const match = await userFns.findOne({
       id: +req.user.sub,
     })
 
     if (!match) {
-      return next(new UnauthorizedError())
+      return next(new UnauthorizedError('Invalid user'))
     }
     req.userId = req.user.sub
     next()

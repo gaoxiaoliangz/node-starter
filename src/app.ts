@@ -4,7 +4,7 @@ import logger from 'morgan'
 import 'ejs' // zeit-now needs this
 import site from './web/site'
 import { renderError } from './middlewares/error'
-import { NotFoundError } from './lib/error'
+import { NotFoundError } from './error'
 import { connectDB } from './middlewares/connect'
 import { setupAPI } from './web/api'
 import { API_BASE_PATH } from './constants'
