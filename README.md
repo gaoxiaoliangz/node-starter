@@ -34,8 +34,8 @@ yarn dev
 set secrets
 
 ```
-now secret add mongodb-url <your-mongodb-url>
-now secret add secret <your-secret-string>
+now secrets add mongodb-url <your-mongodb-url>
+now secrets add secret <your-secret-string>
 ```
 
 these secrets are referenced in `now.json`
