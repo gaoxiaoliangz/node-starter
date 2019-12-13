@@ -17,10 +17,11 @@
     { "src": "/(.*)", "dest": "/src/app.ts" }
   ],
   "env": {
-    "DEBUG": "myapp:*",
+    "DEBUG": "node-starter:*",
     "DB_NAME": "node_starter",
     "DB_URI": "@mongodb-url",
-    "SECRET": "@secret"
+    "SECRET": "@secret",
+    "LOGGER": "log4js"
   },
   "github": {
     "silent": true
