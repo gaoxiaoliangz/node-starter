@@ -8,7 +8,7 @@
       "config": {
         "maxLambdaSize": "50mb",
         "helpers": false,
-        "includeFiles": ["public/**", "views/**"]
+        "includeFiles": ["public/**", "views/**", "configs/**"]
       }
     }
   ],
