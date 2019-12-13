@@ -6,13 +6,16 @@ import {
   errorToPlainObject,
 } from '../error'
 import { getLogger } from '../logger'
+import { isDefinedError as isMongoFnsDefinedError } from 'mongo-fns/lib/error'
 
 const logger = getLogger('middlewares:apperror')
 
 export const renderError = ({ renderPage = false } = {}) => (err, req, res, next) => {
   let statusCode = 500
 
-  if (err instanceof DefinedError) {
+  if (isMongoFnsDefinedError(err)) {
+    statusCode = 400
+  } else if (err instanceof DefinedError) {
     if (err instanceof UnauthorizedError) {
       statusCode = 401
     } else if (err instanceof NotFoundError) {

@@ -11,10 +11,14 @@ export const errorToPlainObject = (error: Error | DefinedError) => {
     return error.toPlainObject()
   }
 
+  const errObj = {}
+  Object.keys(error).forEach(key => {
+    const val = error[key]
+    errObj[key] = val
+  })
+
   return {
-    code: null,
-    message: error.message,
-    details: null,
+    ...errObj,
     ...(isEnvDevelopment && { stack: error.stack }),
   }
 }

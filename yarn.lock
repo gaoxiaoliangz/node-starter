@@ -3168,10 +3168,10 @@ mkdirp@0.x, mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mongo-fns@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/mongo-fns/-/mongo-fns-0.1.7.tgz#1f7f9d73c75e19561e7fe2e8edbab3f72194cf8a"
-  integrity sha512-QVJ+cJUA2gkBIFVGKamEaucgeqDX6oMvDxUcye74TSuXzOkkEQ06OYGuLUj5I4aBdpImHTEETEEBrcAvKevwdA==
+mongo-fns@^0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/mongo-fns/-/mongo-fns-0.1.10.tgz#ae45a5000fc7ab1d8e85881830b70ca8205841e9"
+  integrity sha512-OZ6nYMDtcBW4hHn5zh5aoR8vJTzxBWYkJm7V2j7EjL8LqenHjEWdBFl51Z7Go9A2CQ1ch47YrzDESX/vvMZGEQ==
   dependencies:
     debug "^4.1.1"
     mongodb "^3.3.5"
