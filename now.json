@@ -21,7 +21,7 @@
     "DB_NAME": "node_starter",
     "DB_URI": "@mongodb-url",
     "SECRET": "@secret",
-    "LOGGER": "log4js"
+    "LOGGER": "debug"
   },
   "github": {
     "silent": true
