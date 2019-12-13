@@ -5,8 +5,9 @@ import {
   RuntimeError,
   errorToPlainObject,
 } from '../error'
+import { getLogger } from '../logger'
 
-const debug = require('debug')('myapp:middlewares:apperror')
+const logger = getLogger('middlewares:apperror')
 
 export const renderError = ({ renderPage = false } = {}) => (err, req, res, next) => {
   let statusCode = 500
@@ -22,7 +23,7 @@ export const renderError = ({ renderPage = false } = {}) => (err, req, res, next
       statusCode = 400
     }
   }
-  debug(err)
+  logger.error(err)
   const errObject = errorToPlainObject(err)
 
   if (renderPage) {

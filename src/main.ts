@@ -2,9 +2,9 @@ import http from 'http'
 import ws from 'ws'
 import app from './app'
 import { normalizePort } from './utils'
+import { getLogger } from './logger'
 
-const debug = require('debug')('myapp:main')
-
+const logger = getLogger('main')
 const port = normalizePort(process.env.PORT || '3000')
 const server = http.createServer(app)
 
@@ -21,11 +21,11 @@ server.on('error', (error: any) => {
 
   switch (error.code) {
     case 'EACCES':
-      debug(bind + ' requires elevated privileges')
+      logger.error(bind + ' requires elevated privileges')
       process.exit(1)
       break
     case 'EADDRINUSE':
-      debug(bind + ' is already in use')
+      logger.error(bind + ' is already in use')
       process.exit(1)
       break
     default:
@@ -34,7 +34,7 @@ server.on('error', (error: any) => {
 })
 
 server.on('listening', () => {
-  debug(`server running on http://localhost:${port}`)
+  logger.info(`server running on http://localhost:${port}`)
 })
 
 // ws
@@ -56,7 +56,7 @@ const broadcast = data => {
 
 const broadcastTotal = () => {
   const total = wsServer.clients.size
-  debug(`${total} client(s) connected`)
+  logger.info(`${total} client(s) connected`)
   broadcast({
     type: 'update_count',
     total,

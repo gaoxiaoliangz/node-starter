@@ -1,6 +1,6 @@
 import express from 'express'
 import path from 'path'
-import logger from 'morgan'
+import morganLogger from 'morgan'
 import 'ejs' // zeit-now needs this
 import site from './web/site'
 import { renderError } from './middlewares/error'
@@ -8,10 +8,15 @@ import { NotFoundError } from './error'
 import { connectDB } from './middlewares/connect'
 import { setupAPI } from './web/api'
 import { API_BASE_PATH } from './constants'
+import { getLogger } from './logger'
+
+const logger = getLogger('app')
 
 const app = express()
 
-app.use(logger('dev'))
+logger.info('app created')
+
+app.use(morganLogger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.resolve(__dirname, '../public')))

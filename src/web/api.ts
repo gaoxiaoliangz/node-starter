@@ -7,8 +7,9 @@ import { endpoint } from '../helpers'
 import { NotFoundError, RuntimeError } from '../error'
 import { renderError } from '../middlewares/error'
 import { auth } from '../middlewares/auth'
+import { getLogger } from '../logger'
 
-const debug = require('debug')('myapp:web:api')
+const logger = getLogger('web:api')
 
 const upload = multer({
   dest: os.tmpdir(),
@@ -20,7 +21,7 @@ const setupAPIRoutes = () => {
   router.get(
     '/env',
     endpoint(req => {
-      debug(req.headers)
+      logger.info(req.headers)
       return { env: process.env.NODE_ENV, nodeVersion: process.version }
     }),
   )

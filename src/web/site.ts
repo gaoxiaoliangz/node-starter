@@ -1,11 +1,11 @@
 import * as express from 'express'
-import debugFactory from 'debug'
-const debug = debugFactory('myapp:site')
+import { getLogger } from '../logger'
 
+const logger = getLogger('site')
 const router = express.Router()
 
 const site = () => {
-  debug('site up')
+  logger.info('site up')
 
   router.get('/', (req, res) => {
     res.render('home', {
