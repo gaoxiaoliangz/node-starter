@@ -13,6 +13,7 @@ const userSchema = docSchema({
     password: primitive(ValueType.String),
     role: primitive(ValueType.String),
   },
+  required: ['password', 'username', 'role'],
 })
 
 export type User = Fields<{

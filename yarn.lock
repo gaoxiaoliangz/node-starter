@@ -3116,10 +3116,10 @@ mkdirp@0.x, mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mongo-fns@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/mongo-fns/-/mongo-fns-0.1.6.tgz#fa222cc8265060d212d758e68f8e4089b6244b27"
-  integrity sha512-SFYZMSi/hC1U2RCA7zbRr0yTY3NOs1KsnX59TLsk++tu5nXNe6va7hDWmWY0gKVSuMd/sDaqwLzFgADCXvKcDg==
+mongo-fns@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/mongo-fns/-/mongo-fns-0.1.7.tgz#1f7f9d73c75e19561e7fe2e8edbab3f72194cf8a"
+  integrity sha512-QVJ+cJUA2gkBIFVGKamEaucgeqDX6oMvDxUcye74TSuXzOkkEQ06OYGuLUj5I4aBdpImHTEETEEBrcAvKevwdA==
   dependencies:
     debug "^4.1.1"
     mongodb "^3.3.5"
