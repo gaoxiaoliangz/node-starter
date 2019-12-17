@@ -26,6 +26,22 @@ const setupAPIRoutes = () => {
     }),
   )
 
+  router.get('/test-cookie', (req, res) => {
+    res.cookie('test', 'ok', {
+      httpOnly: true,
+    })
+    res.send({
+      ok: true,
+    })
+  })
+
+  router.get('/test-cookie2', (req, res) => {
+    res.cookie('test', 'ok')
+    res.send({
+      ok: true,
+    })
+  })
+
   // test error
   router.get(
     '/test-error',
