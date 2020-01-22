@@ -1,6 +1,6 @@
 # node-starter
 
-A simple express-based node starter
+A simple node starter
 
 ## Features
 
@@ -47,3 +47,4 @@ install deps & build ts
 ```
 docker-compose run app bash -c "cd /app && NODE_ENV=development yarn && NODE_ENV=production yarn build"
 ```
+
