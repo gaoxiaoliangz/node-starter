@@ -1,6 +1,6 @@
 # node-starter
 
-A opinionated node starter
+An opinionated node starter
 
 ## Features
 
