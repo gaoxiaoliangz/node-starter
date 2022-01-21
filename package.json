@@ -30,7 +30,7 @@
     "http-errors": "~1.7.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
-    "log4js": "^6.1.0",
+    "log4js": "^6.4.0",
     "md5": "^2.2.1",
     "mongo-fns": "^0.1.10",
     "mongodb": "^3.3.0",
